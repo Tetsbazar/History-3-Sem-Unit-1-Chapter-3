@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Bazar — Unit 1 | Ch 3 | All Sets 1-14</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Syne',sans-serif;background:#f0faf4;min-height:100vh;color:#1c2e24}
+.top-bar{background:#1a7a4a;padding:0.8rem 1.5rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.top-logo{font-size:1.1rem;font-weight:800;color:white}.top-logo span{color:#f9a825}
+.timer-box{background:rgba(255,255,255,0.15);border-radius:8px;padding:0.4rem 1rem;display:flex;align-items:center;gap:6px;font-size:1rem;font-weight:700;color:white}
+.timer-box.danger{background:#dc3545}
+.main{max-width:820px;margin:0 auto;padding:1.5rem 1rem}
+.hub-header{text-align:center;margin-bottom:2rem}
+.hub-header h1{font-family:'Tiro Bangla',serif;font-size:1.8rem;color:#1c2e24}
+.hub-header p{font-family:'Tiro Bangla',serif;font-size:0.95rem;color:#5a7a66;margin-top:0.3rem}
+.set-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem}
+.set-card{background:white;border-radius:14px;padding:1.5rem;border:1.5px solid #c5dccb;transition:all 0.2s;cursor:pointer;color:#1c2e24;box-shadow:0 2px 8px rgba(26,122,74,0.06)}
+.set-card:hover{transform:translateY(-3px);border-color:#1a7a4a;box-shadow:0 6px 20px rgba(26,122,74,0.12)}
+.set-card .icon{font-size:2.2rem;margin-bottom:0.3rem}
+.set-card .set-num{font-weight:700;font-size:1.1rem;color:#1a7a4a}
+.set-card .set-title{font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66;margin:0.2rem 0 0.5rem}
+.set-card .set-meta{display:flex;gap:1rem;font-size:0.7rem;color:#5a7a66}
+.set-card .set-meta span{background:#f0faf4;padding:0.15rem 0.6rem;border-radius:4px}
+.quiz-info{background:white;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;border:1px solid #c5dccb;display:flex;gap:1rem;flex-wrap:wrap}
+.info-item{font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66}
+.info-item strong{color:#1a7a4a}
+.progress-wrap{background:#c5dccb;border-radius:4px;height:6px;margin-bottom:1.2rem;overflow:hidden}
+.progress-fill{height:100%;background:#1a7a4a;border-radius:4px;transition:width 0.3s}
+.q-card{background:white;border-radius:14px;padding:1.4rem;margin-bottom:1rem;border:1px solid #c5dccb;box-shadow:0 2px 10px rgba(26,122,74,0.06)}
+.q-num{font-size:0.75rem;font-weight:700;color:#e8730a;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.6rem}
+.q-text{font-family:'Tiro Bangla',serif;font-size:1rem;color:#1c2e24;line-height:1.7;margin-bottom:1.1rem}
+.opts{display:flex;flex-direction:column;gap:0.6rem}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:0.7rem 1rem;border:1.5px solid #c5dccb;border-radius:10px;cursor:pointer;transition:all 0.15s;background:white;text-align:left;width:100%;font-family:inherit}
+.opt:hover:not(.disabled){border-color:#1a7a4a;background:#f0faf4}
+.opt-circle{min-width:28px;height:28px;border-radius:50%;border:1.5px solid #c5dccb;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#5a7a66;flex-shrink:0;transition:all 0.15s}
+.opt-text{font-family:'Tiro Bangla',serif;font-size:0.92rem;color:#1c2e24;line-height:1.6;padding-top:2px}
+.opt.correct{border-color:#1a7a4a;background:#e8f7ef}
+.opt.correct .opt-circle{background:#1a7a4a;border-color:#1a7a4a;color:white}
+.opt.wrong{border-color:#dc3545;background:#fdf0f0}
+.opt.wrong .opt-circle{background:#dc3545;border-color:#dc3545;color:white}
+.opt.disabled{cursor:default}
+.explanation{background:#f0faf4;border-left:3px solid #1a7a4a;border-radius:0 8px 8px 0;padding:0.8rem 1rem;margin-top:0.8rem;display:none}
+.explanation.show{display:block}
+.explanation p{font-family:'Tiro Bangla',serif;font-size:0.88rem;color:#2c4035;line-height:1.7}
+.explanation strong{color:#1a7a4a}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:0.8rem}
+.score-show{font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66}
+.next-btn{background:#1a7a4a;color:white;border:none;padding:0.6rem 1.4rem;border-radius:8px;font-family:'Tiro Bangla',serif;font-size:0.9rem;cursor:pointer;transition:all 0.15s}
+.next-btn:hover{background:#2aad68}
+.next-btn:disabled{background:#c5dccb;cursor:default}
+.result-wrap{background:white;border-radius:14px;padding:2rem;text-align:center;border:1px solid #c5dccb;display:none}
+.result-wrap.show{display:block}
+.result-icon{font-size:3rem;margin-bottom:0.5rem}
+.result-score{font-size:3.5rem;font-weight:800;color:#1a7a4a}
+.result-total{font-size:1rem;color:#5a7a66;margin-bottom:0.5rem;font-family:'Tiro Bangla',serif}
+.result-grade{font-size:1.2rem;font-weight:600;color:#1c2e24;margin-bottom:1.5rem;font-family:'Tiro Bangla',serif}
+.result-bars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem;margin-bottom:1.5rem}
+.result-bar{background:#f0faf4;border-radius:10px;padding:0.8rem;text-align:center}
+.rb-num{font-size:1.4rem;font-weight:800}
+.rb-label{font-family:'Tiro Bangla',serif;font-size:0.8rem;color:#5a7a66;margin-top:0.2rem}
+.retry-btn{background:#1a7a4a;color:white;border:none;padding:0.75rem 2rem;border-radius:8px;font-family:'Tiro Bangla',serif;font-size:1rem;cursor:pointer;margin-right:0.5rem}
+.review-btn{background:white;color:#1a7a4a;border:1.5px solid #1a7a4a;padding:0.75rem 2rem;border-radius:8px;font-family:'Tiro Bangla',serif;font-size:1rem;cursor:pointer}
+.back-btn{background:white;color:#5a7a66;border:1.5px solid #c5dccb;padding:0.75rem 2rem;border-radius:8px;font-family:'Tiro Bangla',serif;font-size:1rem;cursor:pointer;margin-top:0.6rem}
+.start-wrap{background:white;border-radius:14px;padding:2rem;text-align:center;border:1px solid #c5dccb}
+.start-wrap h2{font-family:'Tiro Bangla',serif;font-size:1.4rem;color:#1c2e24;margin-bottom:0.5rem}
+.start-wrap p{font-family:'Tiro Bangla',serif;font-size:0.9rem;color:#5a7a66;line-height:1.7;margin-bottom:1.2rem}
+.start-info{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.5rem}
+.si{background:#f0faf4;border-radius:10px;padding:0.8rem;text-align:center}
+.si-num{font-size:1.4rem;font-weight:800;color:#1a7a4a}
+.si-label{font-family:'Tiro Bangla',serif;font-size:0.8rem;color:#5a7a66}
+.start-btn{background:#1a7a4a;color:white;border:none;padding:0.85rem 2.5rem;border-radius:10px;font-family:'Tiro Bangla',serif;font-size:1.05rem;cursor:pointer;box-shadow:0 4px 15px rgba(26,122,74,0.3)}
+.start-btn:hover{background:#2aad68}
+.start-btn:disabled{background:#c5dccb;cursor:not-allowed;box-shadow:none}
+.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:999;display:none}
+.login-overlay.active{display:flex}
+.login-modal{background:white;border-radius:16px;padding:2.5rem;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.login-modal h2{font-family:'Tiro Bangla',serif;font-size:1.3rem;color:#1c2e24;text-align:center;margin-bottom:0.3rem}
+.login-modal p{font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66;text-align:center;margin-bottom:1.5rem}
+.login-modal label{font-size:0.8rem;font-weight:600;color:#1c2e24;display:block;margin-bottom:0.3rem}
+.login-modal input{width:100%;padding:0.7rem 1rem;border:1.5px solid #c5dccb;border-radius:8px;font-size:0.95rem;margin-bottom:1rem;font-family:'Tiro Bangla',serif}
+.login-modal input:focus{outline:none;border-color:#1a7a4a}
+.login-modal .login-btn{width:100%;background:#1a7a4a;color:white;border:none;padding:0.75rem;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Tiro Bangla',serif}
+.login-modal .login-btn:hover{background:#2aad68}
+.login-modal .login-btn:disabled{background:#c5dccb;cursor:not-allowed}
+.login-modal .error-msg{color:#dc3545;font-size:0.8rem;text-align:center;margin-top:0.5rem;font-family:'Tiro Bangla',serif;display:none}
+.login-modal .limit-info{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:0.6rem 1rem;margin-bottom:1rem;font-family:'Tiro Bangla',serif;font-size:0.8rem;color:#856404;display:none}
+.login-modal .set-name-display{background:#f0faf4;border-radius:8px;padding:0.5rem;text-align:center;margin-bottom:1rem;font-family:'Tiro Bangla',serif;font-size:0.9rem;color:#1a7a4a;font-weight:600}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-logo">Test <span>Bazar</span></div>
+  <div class="timer-box" id="timerBox">⏱ <span id="timerDisplay">10:00</span></div>
+</div>
+
+<div class="main">
+
+  <!-- ===== LOGIN OVERLAY ===== -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-modal">
+      <h2>🔐 লগইন করুন</h2>
+      <p>Test শুরু করতে আপনার ইউজারনেম ও পাসওয়ার্ড দিন</p>
+      <div class="set-name-display" id="loginSetName">📚 Set 1</div>
+      <div class="limit-info" id="limitInfo">⚠️ <span id="limitMsg"></span></div>
+      <label>ইউজারনেম</label>
+      <input type="text" id="loginUsername" placeholder="আপনার ইউজারনেম লিখুন">
+      <label>পাসওয়ার্ড</label>
+      <input type="password" id="loginPassword" placeholder="আপনার পাসওয়ার্ড লিখুন" onkeydown="if(event.key==='Enter') doLoginFromSet()">
+      <button class="login-btn" id="loginBtn" onclick="doLoginFromSet()">✅ লগইন করে Test শুরু করো</button>
+      <div class="error-msg" id="loginError">❌ ভুল ইউজারনেম বা পাসওয়ার্ড। আবার চেষ্টা করুন।</div>
+    </div>
+  </div>
+
+  <!-- ===== HUB PAGE ===== -->
+  <div id="hubPage">
+    <div class="hub-header">
+      <h1>📚 Unit 1 — তৃতীয় অধ্যায়: বিজয়নগর, বাহমনি ও বাংলা</h1>
+      <p>নিচের সেটগুলো থেকে বেছে নিন। Test শুরু করতে সেটে ক্লিক করুন এবং লগইন করুন।</p>
+      <div id="hubUserInfo" style="font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66;margin-top:0.5rem;"></div>
+    </div>
+    <div class="set-grid" id="setGrid"></div>
+  </div>
+
+  <!-- ===== TEST AREA ===== -->
+  <div id="testArea" class="hidden">
+    <div class="quiz-info">
+      <div class="info-item">🎓 <strong id="testSetName">শিক্ষাবিজ্ঞান</strong> — Unit 1 | Ch 3 | <span id="testSetLabel">Set 1</span></div>
+      <div class="info-item">📝 <span id="testTopic">বিজয়নগরের উপাদান ও উৎপত্তি</span></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="q-card" id="qCard">
+      <div class="q-num" id="qNum">প্রশ্ন ১ / ১৫</div>
+      <div class="q-text" id="qText"></div>
+      <div class="opts" id="qOpts"></div>
+      <div class="explanation" id="explanation"><p id="explanationText"></p></div>
+      <div class="nav-row">
+        <div class="score-show" id="scoreShow">সঠিক: ০ | ভুল: ০</div>
+        <button class="next-btn" id="nextBtn" onclick="nextQ()" disabled>পরবর্তী →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESULT AREA ===== -->
+  <div class="result-wrap" id="resultWrap">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="result-score" id="finalScore"></div>
+    <div class="result-total">/ ১৫</div>
+    <div class="result-grade" id="resultGrade"></div>
+    <div class="result-bars">
+      <div class="result-bar"><div class="rb-num" id="rbCorrect" style="color:#1a7a4a"></div><div class="rb-label">সঠিক</div></div>
+      <div class="result-bar"><div class="rb-num" id="rbWrong" style="color:#dc3545"></div><div class="rb-label">ভুল</div></div>
+      <div class="result-bar"><div class="rb-num" id="rbPct" style="color:#e8730a"></div><div class="rb-label">স্কোর</div></div>
+    </div>
+    <div id="attemptInfo" style="font-family:'Tiro Bangla',serif;font-size:0.85rem;color:#5a7a66;margin-bottom:1rem;"></div>
+    <button class="retry-btn" onclick="startQuiz(currentSetId)">আবার চেষ্টা করো</button>
+    <button class="review-btn" onclick="showReview()">উত্তর দেখো</button>
+    <br>
+    <button class="back-btn" onclick="goToHub()">← Hub এ ফিরে যাও</button>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+//  ইউজার ডেটাবেস
+// ============================================================
+const MAX_ATTEMPTS = 10;
+const TOTAL_SETS = 14;
+
+const userData = [
+  {username:"alfa_romeo", password:"ARx7P29m", attempts:{}},
+  {username:"santos", password:"St8Qv41L", attempts:{}},
+  {username:"falcon", password:"Fc3MZ92k", attempts:{}},
+  {username:"titan", password:"Ti6Rp84W", attempts:{}},
+  {username:"matrix", password:"Mx5Kd73N", attempts:{}},
+  {username:"phoenix", password:"Ph9Js28V", attempts:{}},
+  {username:"cobra", password:"Cb4Ln65X", attempts:{}},
+  {username:"shadow", password:"Sh7Wp19Q", attempts:{}},
+  {username:"rocket", password:"Rc2Ty86M", attempts:{}},
+  {username:"warrior", password:"Wr8Az34K", attempts:{}},
+  {username:"eagle", password:"Eg5Xq72P", attempts:{}},
+  {username:"thunder", password:"Th1Vk93R", attempts:{}},
+  {username:"dragon", password:"Dr6Hm48N", attempts:{}},
+  {username:"panther", password:"Pa9Nc25J", attempts:{}},
+  {username:"viking", password:"Vi4Qs87L", attempts:{}},
+  {username:"hunter", password:"Hu7Bp31X", attempts:{}},
+  {username:"legend", password:"Le2Mz64T", attempts:{}},
+  {username:"ranger", password:"Ra8Kd95W", attempts:{}},
+  {username:"knight", password:"Kn3Xp57Q", attempts:{}},
+  {username:"turbo", password:"Tu6Lv21N", attempts:{}},
+  {username:"alpha", password:"Ap9Rm83K", attempts:{}},
+  {username:"bravo", password:"Br5Yt42M", attempts:{}},
+  {username:"charlie", password:"Ch7Wq16P", attempts:{}},
+  {username:"delta", password:"De4Nk78X", attempts:{}},
+  {username:"echo", password:"Ec8Jp35V", attempts:{}},
+  {username:"foxtrot", password:"Fx2Lm94Q", attempts:{}},
+  {username:"gamma", password:"Ga6Xs27T", attempts:{}},
+  {username:"helix", password:"He1Vp85N", attempts:{}},
+  {username:"inferno", password:"In9Qk43L", attempts:{}},
+  {username:"jaguar", password:"Ja5Mz72W", attempts:{}},
+  {username:"karma", password:"Ka8Rp14X", attempts:{}},
+  {username:"laser", password:"La3Tn67Q", attempts:{}},
+  {username:"meteor", password:"Me7Wx29P", attempts:{}},
+  {username:"nova", password:"No4Kz86M", attempts:{}},
+  {username:"omega", password:"Om2Lp53V", attempts:{}},
+  {username:"pegasus", password:"Pe9Xq71N", attempts:{}},
+  {username:"quantum", password:"Qu5Vr38K", attempts:{}},
+  {username:"rebel", password:"Re8Mz24T", attempts:{}},
+  {username:"storm", password:"St1Kp97W", attempts:{}},
+  {username:"tornado", password:"To6Nx45Q", attempts:{}},
+  {username:"ultra", password:"Ul3Wp82M", attempts:{}},
+  {username:"vector", password:"Ve7Lq19X", attempts:{}},
+  {username:"wolf", password:"Wo4Rm63P", attempts:{}},
+  {username:"xenon", password:"Xe9Tk25N", attempts:{}},
+  {username:"yodha", password:"Yo2Vz78K", attempts:{}},
+  {username:"zeus", password:"Ze8Mp41Q", attempts:{}},
+  {username:"atlas", password:"At5Lx93W", attempts:{}},
+  {username:"blaze", password:"Bl1Qn67M", attempts:{}},
+  {username:"cyclone", password:"Cy7Rp34T", attempts:{}},
+  {username:"dynamo", password:"Dy4Wk82X", attempts:{}},
+  {username:"apollo", password:"Ap7Kx94Lm", attempts:{}},
+  {username:"archer", password:"Ar3Vp62Qn", attempts:{}},
+  {username:"asteroid", password:"As8Tm15Rw", attempts:{}},
+  {username:"bandit", password:"Ba5Qz71Kp", attempts:{}},
+  {username:"bison", password:"Bi9Ln34Xt", attempts:{}},
+  {username:"bullet", password:"Bu2Wr86Mv", attempts:{}},
+  {username:"canyon", password:"Ca6Xp29Qk", attempts:{}},
+  {username:"captain", password:"Cp1Mz75Ln", attempts:{}},
+  {username:"comet", password:"Co8Tk43Wp", attempts:{}},
+  {username:"cyclonex", password:"Cy4Vr92Km", attempts:{}},
+  {username:"diesel", password:"Di7Lp18Qx", attempts:{}},
+  {username:"domino", password:"Do3Wn67Rt", attempts:{}},
+  {username:"duke", password:"Du9Kx25Mv", attempts:{}},
+  {username:"empire", password:"Em5Qp84Ln", attempts:{}},
+  {username:"explorer", password:"Ex2Vz39Kt", attempts:{}},
+  {username:"fighter", password:"Fi8Lm71Qw", attempts:{}},
+  {username:"galaxy", password:"Ga4Tk26Xp", attempts:{}},
+  {username:"gladiator", password:"Gl7Wp95Mn", attempts:{}},
+  {username:"gravity", password:"Gr1Nx53Lq", attempts:{}},
+  {username:"hawk", password:"Ha9Kz42Rt", attempts:{}},
+  {username:"horizon", password:"Ho5Vm87Xp", attempts:{}},
+  {username:"icefire", password:"Ic3Lp16Qn", attempts:{}},
+  {username:"impact", password:"Im8Wr74Kt", attempts:{}},
+  {username:"ironman", password:"Ir2Xq95Mv", attempts:{}},
+  {username:"jetstar", password:"Je6Nk38Lp", attempts:{}},
+  {username:"kingston", password:"Ki1Vp72Qw", attempts:{}},
+  {username:"lightning", password:"Li9Tm45Rx", attempts:{}},
+  {username:"majestic", password:"Ma4Kp83Ln", attempts:{}},
+  {username:"monster", password:"Mo7Wz21Qt", attempts:{}},
+  {username:"neptune", password:"Ne3Lx96Mv", attempts:{}},
+  {username:"ninja", password:"Ni8Qr54Kp", attempts:{}},
+  {username:"orbit", password:"Or2Vp73Ln", attempts:{}},
+  {username:"patriot", password:"Pa6Tk18Qw", attempts:{}},
+  {username:"pioneer", password:"Pi1Xm85Rt", attempts:{}},
+  {username:"predator", password:"Pr9Lq47Kv", attempts:{}},
+  {username:"proton", password:"Pt4Wn62Mx", attempts:{}},
+  {username:"rapid", password:"Ra7Kx93Lp", attempts:{}},
+  {username:"samurai", password:"Sa3Vp25Qn", attempts:{}},
+  {username:"sniper", password:"Sn8Tm71Rw", attempts:{}},
+  {username:"solaris", password:"So2Qk84Mv", attempts:{}},
+  {username:"spartan", password:"Sp6Ln39Xt", attempts:{}},
+  {username:"striker", password:"St1Wr57Kp", attempts:{}},
+  {username:"summit", password:"Su9Xp26Lm", attempts:{}},
+  {username:"taurus", password:"Ta5Vz91Qw", attempts:{}},
+  {username:"tempest", password:"Te3Kp48Rt", attempts:{}},
+  {username:"trident", password:"Tr8Wm72Ln", attempts:{}},
+  {username:"valiant", password:"Va2Nx35Qk", attempts:{}},
+  {username:"voyager", password:"Vo6Lp97Mx", attempts:{}},
+  {username:"wildfire", password:"Wi1Tk64Rv", attempts:{}},
+  {username:"zenith", password:"Ze9Qx28Lp", attempts:{}}
+];
+
+// ============================================================
+//  সব সেটের ডেটা (Set 1-14 for Unit 1 Chapter 3)
+// ============================================================
+const allSets = {
+  1: {
+    name: 'Set 1',
+    icon: '🏛️',
+    topic: 'বিজয়নগরের উপাদান, উৎপত্তি ও সঙ্গম বংশের প্রথমার্ধ',
+    questions: [
+      {q: 'বিজয়নগর সাম্রাজ্যের ইতিহাস রচনার অন্যতম সাহিত্যিক উপাদান মাদুরাবিজয়ম কে রচনা করেছেন?', opts: ['গঙ্গাধর', 'সায়নাচার্য', 'গঙ্গাদেবী', 'কৃষ্ণদাস কবিরাজ'], ans: 2, exp: 'বিজয়নগর সাম্রাজ্যের ইতিহাস রচনার অন্যতম গুরুত্বপূর্ণ উপাদান হিসেবে গঙ্গাদেবী রচিত মাদুরাবিজয়ম থেকে এই সাম্রাজ্যের বহু তথ্য পাওয়া যায়।'},
+      {q: 'ঐতিহাসিক রবার্ট সিওয়েল তাঁর কোন্ গ্রন্থে বিজয়নগরের উৎপত্তি সংক্রান্ত সাতটি মতবাদের কথা উল্লেখ করেছেন?', opts: ['আ ফরগটেন এম্পায়ার', 'দ্য বিজয়নগর এম্পায়ার', 'সাউথ ইন্ডিয়ান হিস্ট্রি', 'মাদুরাবিজয়ম'], ans: 0, exp: 'রবার্ট সিওয়েল তাঁর বিখ্যাত গ্রন্থ A Forgotten Empire-এ বিজয়নগরের উৎপত্তি সংক্রান্ত সাতটি মতবাদের উল্লেখ করেছেন।'},
+      {q: '১৩৩৬ খ্রিস্টাব্দে হরিহর ও বুক্ক কার সাহায্যে তুঙ্গভদ্রা নদীর তীরে বিজয়নগর রাজ্য প্রতিষ্ঠা করেন?', opts: ['শঙ্করদেব', 'মাধব বিদ্যারণ্য', 'রামানুজ', 'বল্লভাচার্য'], ans: 1, exp: '১৩৩৬ খ্রিস্টাব্দে গুরু মাধব বিদ্যারণ্য ও তাঁর ভ্রাতা সায়নাচার্যের সাহায্যে হরিহর ও বুক্ক পুনরায় হিন্দুধর্মে দীক্ষিত হন এবং তুঙ্গভদ্রা নদীর দক্ষিণ তীরে বিজয়নগর রাজ্য প্রতিষ্ঠা করেন।'},
+      {q: 'প্রথম হরিহর ভগবান শ্রীবিবূপাক্ষের প্রতিনিধি হিসেবে রাজ্য শাসন করতেন এবং তিনি নিজে কী নাম গ্রহণ করেন?', opts: ['রাজপরমেশ্বর', 'মহারাজাধিরাজ', 'শ্রীবিরূপাক্ষ', 'বেদমার্গ প্রতিষ্ঠাপক'], ans: 2, exp: 'জনসাধারণকে সন্তুষ্ট করার জন্য হরিহর ঘোষণা করেন যে তিনি ভগবান শ্রীবিরূপাক্ষের প্রতিনিধি হিসেবে রাজ্য শাসন করবেন এবং তিনি শ্রীবিরূপাক্ষ নাম গ্রহণ করে সরকারি কাগজপত্রে সই করতেন।'},
+      {q: 'বিজয়নগর সাম্রাজ্যে তিন শতাধিক বছর ধরে মোট কয়টি রাজবংশ রাজত্ব করেছিল?', opts: ['দুটি', 'তিনটি', 'চারটি', 'পাঁচটি'], ans: 2, exp: '১৩৩৬ থেকে ১৬৭২ খ্রিস্টাব্দ পর্যন্ত বিজয়নগরে মোট চারটি রাজবংশ রাজত্ব করেছিল— সঙ্গম বংশ, সালুভ বংশ, তুলুভ বংশ এবং আরবিডু বংশ।'},
+      {q: 'সঙ্গম বংশের প্রথম নরপতি কে ছিলেন?', opts: ['বুক্ক', 'প্রথম হরিহর', 'দ্বিতীয় হরিহর', 'প্রথম দেবরায়'], ans: 1, exp: 'পিতা সঙ্গমের নামানুসারে প্রতিষ্ঠিত সঙ্গম বংশের প্রথম নরপতি ছিলেন প্রথম হরিহর (১৩৩৬-১৩৫৬ খ্রি.)।'},
+      {q: 'বিজয়নগর ও বাহমনি রাজ্যের মধ্যে দীর্ঘস্থায়ী বিবাদের প্রকৃত কারণ কী ছিল?', opts: ['দুই রাজ্যের ভিন্ন ধর্মমত', 'উত্তর ভারতে সাম্রাজ্য বিস্তারের আকাঙ্ক্ষা', 'অর্থনৈতিক স্বার্থ ও উর্বর রায়চুর দোয়াবের দখল', 'পোর্তুগিজদের বাণিজ্য নিয়ন্ত্রণ'], ans: 2, exp: 'আপাতদৃষ্টিতে ধর্ম বা দাক্ষিণাত্যের প্রাধান্য বিস্তার কারণ বলে মনে হলেও প্রকৃত কারণ ছিল তুঙ্গভদ্রা দোয়াব (রায়চুর দোয়াব) অঞ্চলের অধিকার দখল করা।'},
+      {q: 'প্রথম হরিহরের পর বিজয়নগরের সিংহাসনে কে বসেন?', opts: ['দ্বিতীয় হরিহর', 'প্রথম দেবরায়', 'মল্লিকার্জুন', 'বুক্ক'], ans: 3, exp: 'প্রথম হরিহরের মৃত্যুর পর তাঁর ভ্রাতা বুক্ক (১৩৫৬-১৩৭৭ খ্রি.) সিংহাসনে বসেন এবং মাদুরা জয় করে দক্ষিণে রামেশ্বরম পর্যন্ত তাঁর আধিপত্য বিস্তৃত করেন।'},
+      {q: 'বুক্ক-এর আমলে কোন্ বাহমনি সুলতান তুঙ্গভদ্রা অতিক্রম করে বিজয়নগরে প্রবেশ করেছিলেন?', opts: ['প্রথম মহম্মদ', 'ফিরোজ শাহ', 'মামুদ গাওয়ান', 'মুজাহিদ শাহ'], ans: 0, exp: 'বুক্ক মুদগল দুর্গ আক্রমণ করলে বাহমনি সুলতান প্রথম মহম্মদ তা পুনরুদ্ধার করেন এবং তুঙ্গভদ্রা পার হয়ে বিজয়নগরে প্রবেশ করে নির্বিচার গণহত্যা চালান।'},
+      {q: 'হিন্দুধর্মের রক্ষক হিসেবে বুক্ক কী উপাধি গ্রহণ করেছিলেন?', opts: ['মহারাজাধিরাজ', 'বেদমার্গ প্রতিষ্ঠাপক', 'রাজপরমেশ্বর', 'গজনপতি'], ans: 1, exp: 'হিন্দুধর্মের রক্ষক হিসেবে বুক্ক বেদমার্গ প্রতিষ্ঠাপক উপাধি গ্রহণ করলেও তিনি অত্যন্ত উদার প্রকৃতির মানুষ ছিলেন।'},
+      {q: 'বিজয়নগরের রাজন্যবর্গের মধ্যে কে সর্বপ্রথম মহারাজাধিরাজ ও রাজপরমেশ্বর রাজকীয় উপাধি ধারণ করেন?', opts: ['প্রথম হরিহর', 'বুক্ক', 'দ্বিতীয় হরিহর', 'প্রথম দেবরায়'], ans: 2, exp: '১৩৭৭ খ্রিস্টাব্দে বুক্কের মৃত্যুর পর তাঁর পুত্র দ্বিতীয় হরিহর সিংহাসনে বসেন এবং তিনিই প্রথম রাজকীয় উপাধি মহারাজাধিরাজ ও রাজপরমেশ্বর ধারণ করেন।'},
+      {q: 'দ্বিতীয় হরিহর বাহমনি রাজ্যের কাছ থেকে কোন্ কোন্ অঞ্চল দখল করে বিজয়নগরের শক্তি বৃদ্ধি করেন?', opts: ['বেলগাঁও ও গোয়া', 'মুদগল ও রায়চুর', 'তাঞ্জোর ও মাদুরা', 'বিদর ও বেরার'], ans: 0, exp: 'বাহমনি রাজ্যের বিরুদ্ধে যুদ্ধে পরাজিত হয়ে ক্ষতিপূরণ দিলেও তিনি কাস্টি, মহীশূর, কানাড়া জয়ের পাশাপাশি বাহমনি রাজ্যের কাছ থেকে বেলগাঁও ও গোয়া দখল করে বিজয়নগরের শক্তি বৃদ্ধি করেন।'},
+      {q: 'প্রথম দেবরায়ের আমলে কোন্ বাহমনি সুলতানের সঙ্গে বিজয়নগরের তিনবার প্রত্যক্ষ সংঘর্ষ হয়?', opts: ['প্রথম মহম্মদ', 'ফিরোজ শাহ', 'আহম্মদ শাহ', 'দ্বিতীয় আলাউদ্দিন'], ans: 1, exp: 'প্রথম দেবরায়ের আমলের উল্লেখযোগ্য ঘটনা ছিল বাহমনি সুলতান ফিরোজ শাহের সঙ্গে অন্তত তিনবার প্রত্যক্ষ সংঘর্ষ। প্রথম দু-বার তিনি পরাজিত হলেও ১৪২০ খ্রিস্টাব্দে তিনি ফিরোজ শাহকে পরাজিত করেন।'},
+      {q: 'কৃষির উন্নতির জন্য তুঙ্গভদ্রা ও হরিদ্রা নদীতে কে বাঁধ নির্মাণ করে সেচের ব্যবস্থা করেন?', opts: ['দ্বিতীয় দেবরায়', 'কৃষ্ণদেব রায়', 'প্রথম দেবরায়', 'বুক্ক'], ans: 2, exp: 'প্রথম দেবরায় কৃষির উন্নতির জন্য তুঙ্গভদ্রা ও হরিদ্রা নদীতে বাঁধ নির্মাণ করে সেচের ব্যবস্থা করেন এবং তিনি রাজ্যে পোর্তুগিজ বণিকদের বাণিজ্যিক সুযোগ সুবিধাও দিয়েছিলেন।'},
+      {q: 'সঙ্গম বংশের শ্রেষ্ঠ নরপতি কে ছিলেন?', opts: ['প্রথম হরিহর', 'প্রথম দেবরায়', 'দ্বিতীয় হরিহর', 'দ্বিতীয় দেবরায়'], ans: 3, exp: 'প্রথম দেবরায়ের পুত্র দ্বিতীয় দেবরায় (১৪২২-১৪৪৬ খ্রি.) ছিলেন সঙ্গম বংশের শ্রেষ্ঠ নরপতি। তিনি তুর্কি তিরন্দাজ নিয়োগ করে সেনাবাহিনী পুনর্গঠন করেছিলেন।'}
+    ]
+  },
+  2: {
+    name: 'Set 2',
+    icon: '👑',
+    topic: 'সঙ্গম বংশের শেষভাগ ও সালুভ বংশ',
+    questions: [
+      {q: 'ইতালীয় পর্যটক নিকোলো কন্টি এবং পারসিক দূত আবদুর রজ্জাক কার শাসনকালে বিজয়নগরে আসেন?', opts: ['প্রথম দেবরায়', 'দ্বিতীয় দেবরায়', 'কৃষ্ণদেব রায়', 'সদাশিব রায়'], ans: 1, exp: 'এই দুই বিখ্যাত বিদেশি পর্যটক দ্বিতীয় দেবরায়ের আমলে বিজয়নগরে আসেন এবং দুজনেই তাঁকে দাক্ষিণাত্যের শ্রেষ্ঠ নরপতি বলে অভিহিত করেন।'},
+      {q: 'দ্বিতীয় দেবরায়ের পর বিজয়নগরের সিংহাসনে কে বসেন, যাঁর আমলে উড়িষ্যার গজপতি পুরুষোত্তম বিজয়নগর আক্রমণ করেছিলেন?', opts: ['মল্লিকার্জুন', 'বিরূপাক্ষ', 'নরসিংহ সালুভ', 'বীর নরসিংহ'], ans: 0, exp: 'দ্বিতীয় দেবরায়ের পর তাঁর পুত্র মল্লিকার্জুন সিংহাসনে বসেন এবং তিনি উড়িষ্যার গজপতি পুরুষোত্তম ও বাহমনি সুলতানের যৌথ আক্রমণ সাফল্যের সঙ্গে প্রতিহত করেন।'},
+      {q: 'সঙ্গম বংশের শেষ রাজা কে ছিলেন, যাঁর আমলে সাম্রাজ্যে চূড়ান্ত বিশৃঙ্খলা দেখা দেয়?', opts: ['মল্লিকার্জুন', 'বিরূপাক্ষ', 'অচ্যুত রায়', 'সদাশিব রায়'], ans: 1, exp: '১৪৬৫ খ্রিস্টাব্দে মল্লিকার্জুনের মৃত্যুর পর তাঁর ভ্রাতা বিরূপাক্ষ সিংহাসনে বসেন। তাঁর দুর্বলতার সুযোগে সামন্তরা স্বাধীন হতে চায় এবং বাহমনি রাজ্য বিজয়নগরের কিছু অংশ দখল করে।'},
+      {q: 'বিরূপাক্ষকে হত্যা করে কে বিজয়নগরে সালুভ বংশের সূচনা করেন?', opts: ['ইম্মদি নরসিংহ', 'বীর নরসিংহ', 'নরসিংহ সালুভ', 'তিরুমল'], ans: 2, exp: 'সাম্রাজ্যের বিশৃঙ্খল পরিস্থিতিতে চন্দ্রগিরির শাসনকর্তা নরসিংহ সালুভ দুর্বল বিরূপাক্ষকে হত্যা করে ১৪৮৬ খ্রিস্টাব্দে সিংহাসনে বসেন এবং সালুভ বংশ প্রতিষ্ঠা করেন।'},
+      {q: 'সালুভ বংশের রাজত্বকাল কত বছর স্থায়ী হয়েছিল?', opts: ['প্রায় দশ বছর', 'প্রায় উনিশ বছর', 'ত্রিশ বছর', 'পঞ্চাশ বছর'], ans: 1, exp: 'সালুভ বংশের রাজত্বকাল ছিল ১৪৮৬ থেকে ১৫০৫ খ্রিস্টাব্দ পর্যন্ত, অর্থাৎ মাত্র ১৯ বছর এই বংশ বিজয়নগরে রাজত্ব করে।'},
+      {q: 'ইম্মদি নরসিংহের আমলে তাঁর পক্ষে কে প্রকৃত শাসনকার্য পরিচালনা করতেন?', opts: ['রামরায়', 'নরস নায়ক', 'বীর নরসিংহ', 'মাধব বিদ্যারণ্য'], ans: 1, exp: 'নরসিংহ সালুভের শিশুপুত্র ইম্মদি নরসিংহ সিংহাসনে বসলে, তাঁর অযোগ্যতার কারণে তাঁর পিতার বিশ্বস্ত সেনাপতি নরস নায়ক তাঁর পক্ষে শাসনকার্য পরিচালনা করতেন।'},
+      {q: 'সালুভ বংশের পতন ঘটিয়ে কে বিজয়নগরে তুলুভ বংশ প্রতিষ্ঠা করেন?', opts: ['নরস নায়ক', 'বীর নরসিংহ', 'কৃষ্ণদেব রায়', 'তিরুমল'], ans: 1, exp: 'সেনাপতি নরস নায়কের পুত্র উচ্চাকাঙ্ক্ষী বীর নরসিংহ ১৫০৫ খ্রিস্টাব্দে দুর্বল সম্রাট ইম্মদি নরসিংহকে হত্যা করে সিংহাসনে বসেন এবং তুলুভ বংশ প্রতিষ্ঠা করেন।'},
+      {q: 'তুলুভ বংশের প্রতিষ্ঠাতা বীর নরসিংহ আরবের ভালো ঘোড়া সরবরাহের জন্য কাদের সঙ্গে চুক্তিবদ্ধ হন?', opts: ['ফরাসিদের সঙ্গে', 'ওলন্দাজদের সঙ্গে', 'পোর্তুগিজ সেনাপতি আলমিডার সঙ্গে', 'আরব বণিকদের সঙ্গে'], ans: 2, exp: 'অশ্বারোহী বাহিনী শক্তিশালী করতে বীর নরসিংহ পোর্তুগিজ সেনাপতি আলমিডার সঙ্গে চুক্তি করেন।'},
+      {q: 'বীর নরসিংহের পর ১৫০৯ খ্রিস্টাব্দে বিজয়নগরের সিংহাসনে কে বসেন?', opts: ['অচ্যুত রায়', 'কৃষ্ণদেব রায়', 'সদাশিব রায়', 'রামরায়'], ans: 1, exp: 'বীর নরসিংহের পর তাঁর কনিষ্ঠ ভ্রাতা কৃষ্ণদেব রায় সিংহাসনে বসেন, যিনি তুলুভ বংশের তথা সমগ্র বিজয়নগর সাম্রাজ্যের সর্বশ্রেষ্ঠ নরপতি ছিলেন।'},
+      {q: '"রাজাদের মধ্যে তিনিই ছিলেন সর্বাপেক্ষা পণ্ডিত এবং সর্বোত্তম শাসক, সুবিচারক, সাহসী ও সর্বগুণান্বিত" - কৃষ্ণদেব রায় সম্পর্কে এ কথা কে বলেছেন?', opts: ['নিকোলো কন্টি', 'ফার্নাও নুনিজ', 'ডোমিঙ্গো পায়েজ', 'আবদুর রজ্জাক'], ans: 2, exp: 'পোর্তুগিজ পর্যটক ডোমিঙ্গো পায়েজ কৃষ্ণদেব রায়ের উচ্ছ্বসিত প্রশংসা করতে গিয়ে তাঁর সম্পর্কে এই বিখ্যাত উক্তিটি করেছিলেন।'},
+      {q: 'কৃষ্ণদেব রায় কোন্ যুদ্ধে বিজাপুরের সুলতান ইউসুফ আদিল শাহকে পরাজিত ও নিহত করে রায়চুর-দোয়াব দখল করেন?', opts: ['তালিকোটার যুদ্ধে', 'কোভেলা কোণ্ডার যুদ্ধে', 'বানিহাটির যুদ্ধে', 'রাইচুরের যুদ্ধে'], ans: 1, exp: 'কৃষ্ণদেব রায় কোভেলা কোণ্ডার যুদ্ধে বিজাপুরের সুলতান ইউসুফ আদিল শাহকে পরাজিত ও নিহত করে রায়চুর-দোয়াব দখল করেন।'},
+      {q: 'কৃষ্ণদেব রায় ওড়িশার কোন্ রাজাকে পরাজিত করে উদয়গিরি পুনরুদ্ধার করেন?', opts: ['কপিলেন্দ্রদেব', 'পুরুষোত্তম গজপতি', 'প্রতাপরুদ্র', 'অনন্তবর্মণ'], ans: 2, exp: 'কৃষ্ণদেব রায় ওড়িশার অধিপতি প্রতাপরুদ্রকে পরাজিত করে উদয়গিরি পুনরুদ্ধার করেন এবং কোন্ডবিডু অধিকার করেন।'},
+      {q: 'কৃষ্ণদেব রায়ের রচিত রাজনীতি বিষয়ক বিখ্যাত তেলুগু গ্রন্থটির নাম কী?', opts: ['জ্ঞানেশ্বরী', 'আমুক্তমাল্যদা', 'রাজকলানির্ণয়', 'মনুচরিত্রমু'], ans: 1, exp: 'সাহিত্য ও শিল্পের পৃষ্ঠপোষক কৃষ্ণদেব রায় তেলুগু ভাষায় আমুক্তমাল্যদা নামে একটি বিখ্যাত রাজনীতি বিষয়ক গ্রন্থ রচনা করেছিলেন।'},
+      {q: 'কৃষ্ণদেব রায়ের রাজসভা যে আটজন বিখ্যাত পণ্ডিত অলংকৃত করতেন, তাঁদের কী বলা হত?', opts: ['নবরত্ন', 'অষ্টপ্রধান', 'অষ্টদিগ্‌গজ', 'অষ্টপণ্ডিত'], ans: 2, exp: 'কৃষ্ণদেব রায়ের দরবারে তেলুগু, কন্নড় ও তামিল সাহিত্যিকদের ভিড় থাকত, যাঁদের মধ্যে আটজন বিখ্যাত পণ্ডিত অষ্টদিগ্‌গজ নামে পরিচিত ছিলেন।'},
+      {q: 'কৃষ্ণদেব রায়ের আমলে কোন্ বিখ্যাত তেলুগু সাহিত্যিককে অন্ধ্র কবিতার পিতামহ বলা হত?', opts: ['কুমারব্যাস', 'শ্রীনাথ', 'পোদ্দন', 'তিক্কানা'], ans: 2, exp: 'কৃষ্ণদেব রায়ের সভাকবি তথা বিখ্যাত তেলুগু সাহিত্যিক পোদ্দনকে অন্ধ্র কবিতার পিতামহ বলা হত।'}
+    ]
+  },
+  3: {
+    name: 'Set 3',
+    icon: '⚔️',
+    topic: 'তুলুভ বংশের শ্রেষ্ঠত্ব, কৃষ্ণদেব রায় ও বানিহাটির যুদ্ধ',
+    questions: [
+      {q: 'হাজারা রামস্বামী মন্দির ও বিঠলস্বামী মন্দির কে নির্মাণ করেন?', opts: ['প্রথম হরিহর', 'দ্বিতীয় দেবরায়', 'কৃষ্ণদেব রায়', 'সদাশিব রায়'], ans: 2, exp: 'নির্মাতা হিসেবেও কৃষ্ণদেব রায় উল্লেখযোগ্য ছিলেন। কৃষ্ণস্বামী মন্দির, বিঠলস্বামী মন্দির এবং হাজারা রামস্বামী মন্দির তাঁর আমলের উল্লেখযোগ্য স্থাপত্য কীর্তি।'},
+      {q: 'কৃষ্ণদেব রায় বিজয়নগরের কাছে জলসেচের জন্য যে হ্রদ খনন করেন এবং একটি নতুন নগরী প্রতিষ্ঠা করেন, সেই নগরীটির নাম কী ছিল?', opts: ['নাগলপুর', 'ফতেপুর', 'দৌলতাবাদ', 'চন্দ্রগিরি'], ans: 0, exp: 'জনকল্যাণমূলক কাজের অঙ্গ হিসেবে তিনি বিজয়নগরের কাছে জলসেচের জন্য একটি বিরাট হ্রদ খনন করেন এবং নাগলপুর নামে একটি নগরী প্রতিষ্ঠা করেন।'},
+      {q: 'কৃষ্ণদেব রায়ের মৃত্যুর পর কে বিজয়নগরের সিংহাসনে বসেন?', opts: ['রামরায়', 'সদাশিব রায়', 'অচ্যুত রায়', 'বীর নরসিংহ'], ans: 2, exp: '১৫৩০ খ্রিস্টাব্দে কৃষ্ণদেব রায়ের মৃত্যুর পর তাঁর বৈমাত্রেয় ভ্রাতা অচ্যুত রায় বিজয়নগরের সিংহাসনে বসেন।'},
+      {q: 'অচ্যুত রায়ের দুর্বলতার সুযোগে কোন্ স্থানে একটি স্বাধীন পোর্তুগিজ উপনিবেশ গড়ে ওঠে?', opts: ['গোয়া', 'কালিকট', 'তুতিকোরিনে', 'কোচিনে'], ans: 2, exp: 'অচ্যুত রায়ের অপশাসনে বিক্ষুব্ধ জনতার সমর্থনে মাদুরা ও তাঞ্জোর প্রায় স্বাধীন হয়ে যায় এবং তুতিকোরিনে একটি স্বাধীন পোর্তুগিজ উপনিবেশ গড়ে ওঠে।'},
+      {q: 'সদাশিব রায়ের রাজত্বকালে বিজয়নগরের সকল ক্ষমতা কার হাতে কুক্ষিগত ছিল?', opts: ['অচ্যুত রায়', 'মন্ত্রী রামরায় বা রামরাজা', 'তিরুমল', 'দ্বিতীয় রঙ্গ'], ans: 1, exp: 'দুর্বল শাসক সদাশিব রায়ের আমলে তাঁর মন্ত্রী আরবিডু বংশীয় রামরায় (বা রামরাজা) সকল ক্ষমতা নিজের হাতে তুলে নেন।'},
+      {q: 'রামরায় বিজয়নগরের শক্তিবৃদ্ধির উদ্দেশ্যে কোন্ কূটকৌশল গ্রহণ করেছিলেন?', opts: ['বাহমনি রাজ্যের ধ্বংসস্তূপের ওপর গড়ে ওঠা রাজ্যগুলির অন্তর্দ্বন্দ্বে যোগ দিয়ে তাদের ধ্বংস করা', 'পোর্তুগিজদের সঙ্গে বৈবাহিক সম্পর্ক স্থাপন', 'উত্তর ভারতে সাম্রাজ্য বিস্তার', 'মুঘলদের সাহায্য প্রার্থনা'], ans: 0, exp: 'রামরায়ের বিশেষ কূটনৈতিক দক্ষতা ছিল না, তিনি বাহমনি ভেঙে তৈরি হওয়া ৫টি রাজ্যের বিবাদে নাক গলিয়ে তাদের দুর্বল করার চেষ্টা করেছিলেন।'},
+      {q: 'বিখ্যাত তালিকোটা বা রাক্ষসতাঙ্গড়ি (বানিহাটি)-র যুদ্ধ কত খ্রিস্টাব্দে সংঘটিত হয়েছিল?', opts: ['১৫৫৬ খ্রিস্টাব্দে', '১৫৬৫ খ্রিস্টাব্দের ২৩ জানুয়ারি', '১৫৭০ খ্রিস্টাব্দে', '১৫৭৬ খ্রিস্টাব্দে'], ans: 1, exp: 'রামরায়ের নীতির ফলে ক্ষুব্ধ হয়ে মুসলিম রাষ্ট্রগুলি ঐক্যবদ্ধ হয় এবং ১৫৬৫ খ্রিস্টাব্দের ২৩ জানুয়ারি তালিকোটার যুদ্ধে বিজয়নগরকে চূড়ান্তভাবে পরাজিত করে।'},
+      {q: 'তালিকোটার যুদ্ধে বিজয়নগরের বিরুদ্ধে কোন্ মুসলিম রাজ্য অংশগ্রহণ করেনি?', opts: ['বিজাপুর', 'গোলকুন্ডা', 'বেরার', 'আহম্মদনগর'], ans: 2, exp: 'তালিকোটার যুদ্ধে বিজাপুর, গোলকুন্ডা, বিদর ও আহম্মদনগর এই চারটি রাজ্য জোটবদ্ধ হয়ে অংশগ্রহণ করেছিল, বেরার এই জোটে ছিল না।'},
+      {q: 'তালিকোটার যুদ্ধকে কে বিজয়নগরের মৃত্যুঘণ্টা বলে অভিহিত করেছেন?', opts: ['অধ্যাপক সিওয়েল', 'ড. ঈশ্বরী প্রসাদ', 'ড. সতীশচন্দ্র', 'ড. নীলকণ্ঠ শাস্ত্রী'], ans: 1, exp: 'ঐতিহাসিক ড. ঈশ্বরী প্রসাদ এই যুদ্ধকে বিজয়নগরের মৃত্যুঘণ্টা বলে অভিহিত করেছেন, কারণ বিজয়নগরের পক্ষে এই বিপর্যয়ের ধাক্কা আর কাটিয়ে ওঠা সম্ভব হয়নি।'},
+      {q: 'তালিকোটার যুদ্ধে বিজয়নগরের কোন্ সর্বাধিনায়ক নিহত হন?', opts: ['তিরুমল', 'সদাশিব রায়', 'রামরায়', 'নরস নায়ক'], ans: 2, exp: 'এই যুদ্ধে বিজয়নগরের চূড়ান্ত পরাজয় ঘটে এবং সাম্রাজ্যের প্রকৃত ক্ষমতার অধিকারী মন্ত্রী তথা সেনাপতি রামরায় যুদ্ধক্ষেত্রে নিহত হন।'},
+      {q: '"বিশ্বের ইতিহাসে সম্ভবত কখনও এত সমৃদ্ধশালী এক নগরের ওপর এত আকস্মিকভাবে কোনো ধ্বংসলীলা সংঘটিত হয়নি"— তালিকোটা যুদ্ধের পর বিজয়নগর ধ্বংস সম্পর্কে এ কথা কে বলেছেন?', opts: ['অধ্যাপক সিওয়েল', 'ডোমিঙ্গো পায়েজ', 'ফার্নাও নুনিজ', 'নিকোলো কন্টি'], ans: 0, exp: 'বিজয়ী মুসলিম বাহিনী দীর্ঘ পাঁচ মাস ধরে বিজয়নগর লুণ্ঠন করে তাকে ধ্বংসস্তূপে পরিণত করে, এই প্রসঙ্গে অধ্যাপক সিওয়েল এই মন্তব্যটি করেছিলেন।'},
+      {q: 'তালিকোটার যুদ্ধের একটি পরোক্ষ সামাজিক ও রাজনৈতিক ফল কী ছিল?', opts: ['পোর্তুগিজদের বাণিজ্য বৃদ্ধি পায়', 'দক্ষিণ ভারতে নিরঙ্কুশ হিন্দু প্রাধান্য স্থাপনের সুযোগ বিনষ্ট হয়', 'বাহমনি সাম্রাজ্যের পুনরুত্থান ঘটে', 'চোল সাম্রাজ্যের প্রতিষ্ঠা হয়'], ans: 1, exp: 'এই যুদ্ধের ফলে দক্ষিণ ভারতে একটি একক হিন্দু শক্তির প্রাধান্য স্থাপনের যে সম্ভাবনা ছিল তা চিরতরে বিনষ্ট হয়ে যায়।'},
+      {q: 'তালিকোটা যুদ্ধের পর ১৫৭০ খ্রিস্টাব্দে কে সদাশিব রায়কে সিংহাসনচ্যুত করে আরবিডু বংশ প্রতিষ্ঠা করেন?', opts: ['দ্বিতীয় রঙ্গ', 'দ্বিতীয় ভেঙ্কট', 'তিরুমল', 'তৃতীয় রঙ্গ'], ans: 2, exp: 'রামরায়ের মৃত্যুর পর তাঁর ভাই তিরুমল সদাশিব রায়ের পক্ষে শাসন চালালেও, ১৫৭০ খ্রিস্টাব্দে তিনি সদাশিবকে সরিয়ে নিজেই সিংহাসনে বসেন এবং আরবিডু বংশ প্রতিষ্ঠা করেন।'},
+      {q: 'আরবিডু বংশের আমলে বিজয়নগরের রাজধানী কোথায় স্থানান্তরিত করা হয়?', opts: ['হাম্পিতে', 'পেনুগোণ্ডায়', 'তাঞ্জোরে', 'মহীশূরে'], ans: 1, exp: 'ধ্বংসপ্রাপ্ত বিজয়নগর থেকে রাজধানী সরিয়ে তিরুমল পেনুগোণ্ডা নামক স্থানে রাজধানী স্থানান্তরিত করেন।'},
+      {q: 'আরবিডু বংশের শেষ উল্লেখযোগ্য রাজা কে ছিলেন, যাঁর মৃত্যুর পর বিজয়নগর সাম্রাজ্যের পতন ঘটে?', opts: ['দ্বিতীয় রঙ্গ', 'তৃতীয় রঙ্গ', 'দ্বিতীয় ভেঙ্কট', 'রামরায়'], ans: 1, exp: 'এই বংশের শেষ উল্লেখযোগ্য নরপতি ছিলেন তৃতীয় রঙ্গ (১৬১৪-১৬৭২ খ্রি.)। তাঁর মৃত্যুর সঙ্গে সঙ্গেই ১৬৭২ খ্রিস্টাব্দে বিজয়নগর রাজ্যের চূড়ান্ত পতন ঘটে।'}
+    ]
+  },
+  4: {
+    name: 'Set 4',
+    icon: '⚙️',
+    topic: 'আরবিডু বংশ, পতনের কারণ ও শাসনব্যবস্থা',
+    questions: [
+      {q: 'দ্বিতীয় ভেঙ্কটের রাজত্বের শেষদিকে (১৬১২ খ্রি.) কে স্বাধীন মহীশূর রাজ্য প্রতিষ্ঠা করেন?', opts: ['সামন্ত উদেয়ার', 'শিবাজি', 'তিরুমল', 'তৃতীয় রঙ্গ'], ans: 0, exp: 'দ্বিতীয় ভেঙ্কটের সময় সাম্রাজ্য দ্রুত পতনের দিকে এগোতে থাকে এবং তাঁর রাজত্বের শেষদিকে সামন্ত উদেয়ার স্বাধীন মহীশূর রাজ্য প্রতিষ্ঠা করেন।'},
+      {q: 'বিজয়নগরের রাজারা ধর্মশাস্ত্র অনুসারে দেশশাসন করতেন। কোন্ রাজা বলেছেন, "ধর্মের প্রতি লক্ষ রেখে রাজ্য শাসন করাই রাজার কর্তব্য"?', opts: ['প্রথম হরিহর', 'দ্বিতীয় দেবরায়', 'কৃষ্ণদেব রায়', 'রামরায়'], ans: 2, exp: 'রাজা কৃষ্ণদেব রায় তাঁর বিখ্যাত রাজনীতি বিষয়ক গ্রন্থ আমুক্তমাল্যদা-তে এই আদর্শের কথা তুলে ধরেছিলেন।'},
+      {q: 'বিজয়নগরের শাসনব্যবস্থায় রাজাকে সাহায্য করার জন্য গঠিত মন্ত্রীসভায় মন্ত্রীদের সংখ্যা সাধারণত কত ছিল?', opts: ['৪ থেকে ৬ জন', '৬ থেকে ৮ জন', '১০ থেকে ১২ জন', '১৫ জন'], ans: 1, exp: 'শাসনকার্যে রাজাকে সাহায্য করার জন্য একটি মন্ত্রীসভা ছিল এবং সাধারণত এই মন্ত্রীসভায় মন্ত্রীদের সংখ্যা ছিল ৬ থেকে ৮ জন।'},
+      {q: 'বিজয়নগর প্রশাসনে প্রধানমন্ত্রীকে কী বলা হত?', opts: ['মহাপ্রধান', 'দণ্ডনায়ক', 'পলিয়গার', 'মহানায়কাচার্য'], ans: 0, exp: 'বিজয়নগর রাজ্যে প্রধানমন্ত্রীকে বলা হত মহাপ্রধান এবং তিনি অন্যান্য মন্ত্রীদের তুলনায় বিশেষ ক্ষমতা ভোগ করতেন।'},
+      {q: 'পারস্যের রাজদূত আবদুর রজ্জাক ও পোর্তুগিজ পর্যটক নুনিজ বিজয়নগরে মন্ত্রীদের কাজের জন্য কোন্ দফতরের কথা উল্লেখ করেছেন?', opts: ['কান্দাচার', 'মহাকরণ', 'অথবন', 'দিউয়ান'], ans: 1, exp: 'পর্যটকদের বিবরণ অনুযায়ী, বিজয়নগরে রাজার মন্ত্রীসভা ও প্রশাসনের জন্য একটি মহাকরণ বা সচিবালয়ের অস্তিত্ব ছিল।'},
+      {q: 'শাসনকার্যের সুবিধার জন্য সমগ্র বিজয়নগর সাম্রাজ্য কয়েকটি প্রদেশে বিভক্ত ছিল, প্রদেশগুলি কী নামে পরিচিত ছিল?', opts: ['শিক', 'তরফ', 'রাজ্য, মণ্ডল বা চাভদী', 'নাডু বা কোট্টম'], ans: 2, exp: 'বিজয়নগর সাম্রাজ্যের প্রদেশগুলি রাজ্য, মণ্ডল, চাভদী প্রভৃতি বিভিন্ন নামে পরিচিত ছিল।'},
+      {q: 'ড. কৃষ্ণশাস্ত্রীর মতে বিজয়নগর সাম্রাজ্যে প্রদেশের সংখ্যা কয়টি ছিল?', opts: ['৪টি', '৮টি', '১২টি', '২০০টি'], ans: 1, exp: 'পোর্তুগিজ পর্যটক পায়েজ ২০০টি প্রদেশের কথা বললেও, ড. কৃষ্ণশাস্ত্রীর মতে বিজয়নগর সাম্রাজ্যে প্রকৃত প্রদেশের সংখ্যা ছিল ৮টি।'},
+      {q: 'বিজয়নগরে প্রাদেশিক শাসনকর্তাদের কী বলা হত?', opts: ['তরফদার', 'ইকতাদার', 'নায়ক বা নায়েক', 'সেনাতোভা'], ans: 2, exp: 'প্রাদেশিক শাসনকর্তাদের নায়ক বা নায়েক বলা হত এবং তাঁরা সাধারণত রাজপরিবার বা অভিজাত সম্প্রদায়ের মধ্য থেকেই নিযুক্ত হতেন।'},
+      {q: 'বিজয়নগরের গ্রামীণ শাসনব্যবস্থায় মহানায়কাচার্য নামে কর্মচারীদের কাজ কী ছিল?', opts: ['হিসাবরক্ষা করা', 'বিনা পারিশ্রমিকে বেগার আদায় করা', 'গ্রামসভার কাজ তদারক করা', 'রাজস্ব আদায় করা'], ans: 2, exp: 'মহানায়কাচার্য নামে এক শ্রেণির কর্মচারী গ্রামসভার কাজ তদারক করতেন এবং তাঁর মাধ্যমেই কেন্দ্রীয় সরকার গ্রামগুলির ওপর কর্তৃত্ব বজায় রাখত।'},
+      {q: 'বিজয়নগর শাসনব্যবস্থায় যে সামন্তপ্রভুরা যুদ্ধকালে রাজাকে নির্দিষ্ট সংখ্যক সেনা পাঠাত এবং বিনিময়ে জায়গির ভোগ করত, তাদের কী বলা হত?', opts: ['আয়গার', 'অমর নায়ক বা পলিয়গার', 'দণ্ডপতি', 'তলরা'], ans: 1, exp: 'এই সামন্তপ্রভুরা অমর নায়ক বা অমরম বা পলিয়গার নামে পরিচিত ছিল। তারা রাজস্বের একটা অংশ দিয়ে সেনাপালন করত এবং বাকিটা রাজাকে দিত।'},
+      {q: 'বিজয়নগর সরকার কৃষকদের থেকে সাধারণত কী হারে ভূমিরাজস্ব আদায় করত?', opts: ['উৎপন্ন শস্যের অর্ধেক', 'উৎপন্ন শস্যের এক-তৃতীয়াংশ', 'উৎপন্ন শস্যের এক-ষষ্ঠাংশ', 'উৎপন্ন শস্যের এক-দশমাংশ'], ans: 2, exp: 'জমির উৎপাদিকা শক্তি অনুসারে ভূমিরাজস্ব নির্ধারিত হত এবং সাধারণত উৎপন্ন শস্যের এক-ষষ্ঠাংশ ভূমিরাজস্ব হিসেবে গৃহীত হত।'},
+      {q: 'বিজয়নগর রাজ্যে রাজস্ব সংক্রান্ত কার্যাবলি পরিচালনার জন্য যে পৃথক দফতর ছিল তার নাম কী?', opts: ['কান্দাচার', 'অথবন', 'মহাকরণ', 'সত্র'], ans: 1, exp: 'রাজস্ব সংক্রান্ত সকল কার্য পরিচালনার জন্য বিজয়নগরে অথবন নামে একটি পৃথক দফতর ছিল।'},
+      {q: 'বিজয়নগর সেনাবাহিনীর তত্ত্বাবধান করত যে দফতর তার নাম কী ছিল?', opts: ['কান্দাচার', 'অথবন', 'মহাকরণ', 'দণ্ডনায়ক'], ans: 0, exp: 'বিজয়নগর সাম্রাজ্যে সামরিক বা সেনাবাহিনীর তত্ত্বাবধান করত কান্দাচার নামে একটি বিশেষ দফতর।'},
+      {q: 'বিজয়নগর সাম্রাজ্যের প্রধান সেনাপতি কী উপাধি ধারণ করতেন?', opts: ['মহাপ্রধান', 'দণ্ডপতি বা দণ্ডনায়ক', 'মহানায়কাচার্য', 'পলিয়গার'], ans: 1, exp: 'দণ্ডপতি বা দণ্ডনায়ক উপাধিধারী প্রধান সেনাপতির ওপর সেনাবাহিনীর দায়িত্ব অর্পিত ছিল।'},
+      {q: 'বিজয়নগর শাসনব্যবস্থার অন্যতম প্রধান সামরিক ত্রুটি কী ছিল?', opts: ['ঘোড়ার অভাব', 'তিরন্দাজের অভাব', 'নৌবাহিনী গড়ার দিকে নজর না দেওয়া এবং আগ্নেয়াস্ত্রের অভাব', 'পদাতিক সেনার অভাব'], ans: 2, exp: 'সমুদ্র ও নদীবেষ্টিত হওয়া সত্ত্বেও তারা নৌবাহিনী গড়ার দিকে নজর দেননি এবং তাঁদের উন্নত মানের কামান ও আগ্নেয়াস্ত্র ছিল না।'}
+    ]
+  },
+  5: {
+    name: 'Set 5',
+    icon: '🎨',
+    topic: 'বিজয়নগরের সমাজ, অর্থনীতি ও শিল্প-সংস্কৃতি',
+    questions: [
+      {q: 'বিজয়নগরের সমাজব্যবস্থায় বর্ণপ্রথা সম্পর্কে বিদেশি পর্যটক দুয়ার্তে বারবোসা কী মন্তব্য করেছেন?', opts: ['সমাজে কোনো জাতিভেদ ছিল না', 'সমাজে কঠোর জাতিভেদ প্রথা থাকলেও বিভিন্ন জাতির মধ্যে মেলামেশায় কঠোরতা ছিল না', 'কেবল ব্রাহ্মণরাই সব সুবিধা পেত', 'নিম্নবর্ণের লোকেরা সম্পূর্ণ দাস ছিল'], ans: 1, exp: 'পর্যটক দুয়ার্তে বারবোসা বর্ণপ্রথাকে স্বীকৃতি দিয়ে বলেছেন যে, সমাজে কঠোর জাতিভেদ প্রথা থাকলেও বিভিন্ন জাতির মধ্যে মেলামেশায় কঠোরতা ছিল না।'},
+      {q: 'বিজয়নগরের সমাজে কোন্ সম্প্রদায়ের মানুষ অধ্যাপনা ও পৌরোহিত্য ছাড়াও যুদ্ধ ও প্রশাসনে যুক্ত ছিলেন এবং নিরামিষাশী ছিলেন?', opts: ['ক্ষত্রিয়রা', 'বৈশ্যরা', 'ব্রাহ্মণরা', 'শূদ্ররা'], ans: 2, exp: 'পোর্তুগিজ পর্যটক ফার্নাও নুনিজ ও পায়েজ-এর বিবরণ অনুযায়ী, ব্রাহ্মণরা অত্যন্ত পরিশ্রমী ও মেধাবী ছিলেন। তাঁরা প্রশাসক, বণিক ও সেনাপতি হিসেবেও কাজ করতেন।'},
+      {q: 'বিজয়নগর সাম্রাজ্যে ঘর-গৃহস্থালি ও রাজনর্তকীর বাইরে আর এক ধরনের নারী মন্দিরের কাজে যুক্ত থাকতেন, তাঁদের কী বলা হত?', opts: ['আয়গার', 'দেবদাসী', 'পলিয়গার', 'যোগিনী'], ans: 1, exp: 'বিদেশি পর্যটকরা নারীদের তিন ভাগে ভাগ করেছেন, যার মধ্যে দেবদাসীরা মন্দিরের সাথে যুক্ত ছিল।'},
+      {q: 'বিজয়নগরে পুরুষদের বহুবিবাহ প্রচলিত ছিল, ইতালীয় পর্যটক নিকোলো কন্টি অনুযায়ী রাজা দেবরায়ের কতজন পত্নী ছিলেন?', opts: ['৫০০ জন', '১২ জন', '৪০০০ জন', '১২ হাজার জন'], ans: 3, exp: 'নিকোলো কন্টি উল্লেখ করেছেন যে, রাজা দেবরায়ের ১২ হাজার পত্নী ছিলেন।'},
+      {q: 'ড. নীলকণ্ঠ শাস্ত্রীর মতে বিজয়নগর সাম্রাজ্যে কিসের মালিকানা সামাজিক মর্যাদার প্রতীক ছিল?', opts: ['প্রচুর হাতির মালিকানা', 'জমির মালিকানা', 'সামুদ্রিক জাহাজের মালিকানা', 'প্রচুর সোনার মালিকানা'], ans: 1, exp: 'ড. নীলকণ্ঠ শাস্ত্রী বলেছেন যে, এই সময় জমির মালিকানা থাকা ছিল সামাজিক মর্যাদার প্রতীক।'},
+      {q: 'বিজয়নগরে মঠ, মন্দির ও অমর নায়কেরা সরকার থেকে জমি পেলে, গ্রামের কৃষকরা তাঁদের ভাড়াটিয়া প্রজায় পরিণত হত। এই ভাড়াটিয়া প্রজাদের কী বলা হত?', opts: ['পলিয়গার', 'পায়কারি', 'তলরা', 'বেগারা'], ans: 1, exp: 'অধিকাংশ ক্ষেত্রে মঠ বা সামন্তরা জমি পেলে প্রকৃত কৃষকরা তাদের জমির স্বত্ব হারিয়ে পায়কারি বা ভাড়াটিয়া প্রজায় পরিণত হত।'},
+      {q: 'বিজয়নগর সাম্রাজ্যে কোন্ ফুলের চাষ অত্যন্ত জনপ্রিয় ছিল এবং পারসিক দূত আবদুর রাজ্জাক একে খাদ্যের মতোই গুরুত্বপূর্ণ বলেছিলেন?', opts: ['পদ্ম', 'জবা', 'গোলাপ', 'রজনীগন্ধা'], ans: 2, exp: 'বিজয়নগর প্রচুর উদ্যান ও বাগানের জন্য বিখ্যাত ছিল এবং গোলাপ চাষের জন্য বিজয়নগর এতই বিখ্যাত ছিল যে আবদুর রাজ্জাক একে নাগরিকদের কাছে খাদ্যের সমতুল্য বলেছেন।'},
+      {q: 'বিজয়নগর রাজ্যে দেশি-বিদেশি বাণিজ্য প্রসারের ক্ষেত্রে শ্রেষ্ঠ বা সমৃদ্ধতম বন্দর কোন্টি ছিল?', opts: ['বোম্বাই', 'সুরাট', 'কালিকট', 'মাদ্রাজ'], ans: 2, exp: 'আবদুর রেজ্জাক-এর মতে বিজয়নগরে তিনশো বন্দর ছিল, যার মধ্যে পশ্চিম উপকূলে অবস্থিত কালিকট বন্দর ছিল সবচেয়ে সমৃদ্ধতম।'},
+      {q: 'বিজয়নগর সাম্রাজ্যের মুদ্রাগুলি প্রধানত কোন্ ধাতুর তৈরি হত?', opts: ['তামা', 'লোহা', 'রূপো', 'সোনা'], ans: 3, exp: 'দক্ষিণ ভারতের অন্যান্য রাজ্যের মুদ্রার মতো বিজয়নগরের মুদ্রাও ছিল প্রধানত সোনার, যা আকারে ছোটো, পুরু ও ভারী হত।'},
+      {q: 'বিজয়নগরের কোন্ রাজা একমাত্র রৌপ্য মুদ্রা প্রকাশ করেছিলেন?', opts: ['দ্বিতীয় দেবরায়', 'কৃষ্ণদেব রায়', 'প্রথম হরিহর', 'সদাশিব রায়'], ans: 0, exp: 'বিজয়নগরে রৌপ্য মুদ্রার প্রচলন খুব একটা ছিল না, একমাত্র দ্বিতীয় দেবরায় (১৪২২-১৪৪৬ খ্রি.) রৌপ্য মুদ্রা প্রকাশ করেছিলেন।'},
+      {q: 'বিজয়নগরের স্থাপত্য রীতি সম্পর্কে বলতে গিয়ে কে বলেছেন যে বিজয়নগরের রাজপ্রাসাদ লিসবনের রাজপ্রাসাদের চেয়েও বড়ো ছিল?', opts: ['আবদুর রেজ্জাক', 'নিকোলো কন্টি', 'ডোমিঙ্গো পায়েজ', 'এডোয়ার্ড বারবোসা'], ans: 2, exp: 'পোর্তুগিজ পর্যটক পায়েজ বিজয়নগরের জাঁকজমক দেখে মুগ্ধ হয়ে রাজপ্রাসাদটিকে তাঁর দেশের রাজধানী লিসবনের রাজপ্রাসাদের চেয়েও বড়ো বলে উল্লেখ করেছেন।'},
+      {q: 'বিজয়নগর সাম্রাজ্যের মন্দির স্থাপত্যের একটি বিশেষ বৈশিষ্ট্য কী ছিল?', opts: ['গম্বুজের ব্যবহার', 'হাজার স্তম্ভযুক্ত মণ্ডপ এবং সুউচ্চ গোপুরম', 'মিনার', 'লাল বেলেপাথরের ব্যবহার'], ans: 1, exp: 'মন্দির স্থাপত্যের বৈশিষ্ট্য ছিল সুউচ্চ স্তম্ভের সারিযুক্ত বিরাট হলঘর যা হাজার স্তম্ভযুক্ত মণ্ডপ নামে পরিচিত এবং জাঁকজমকপূর্ণ গোপুরম।'},
+      {q: 'বিখ্যাত কন্নড় কবি কুমারব্যাস ও তেলুগু কবি শ্রীনাথ কার রাজসভা অলংকৃত করতেন?', opts: ['প্রথম হরিহর', 'কৃষ্ণদেব রায়', 'দ্বিতীয় দেবরায়', 'রামরায়'], ans: 2, exp: 'দ্বিতীয় দেবরায় সাহিত্য-সংস্কৃতির পৃষ্ঠপোষক ছিলেন এবং তাঁর দরবারেই কন্নড় কবি কুমারব্যাস ও তেলুগু কবি শ্রীনাথ উপস্থিত থাকতেন।'},
+      {q: 'বিজয়নগরের শাসনকালে অষ্টদিগ্‌গজ নামক আটজন পণ্ডিতের সমাবেশ কার দরবারে দেখা যেত?', opts: ['অচ্যুত রায়', 'নরসিংহ সালুভ', 'কৃষ্ণদেব রায়', 'দ্বিতীয় হরিহর'], ans: 2, exp: 'তুলুভ বংশীয় শ্রেষ্ঠ রাজা কৃষ্ণদেব রায়ের রাজসভায় অষ্টদিগ্‌গজ নামে আটজন বিখ্যাত তেলুগু, কন্নড় ও তামিল পণ্ডিত উপস্থিত থাকতেন।'},
+      {q: 'বিজয়নগরে অমর নায়ক-দের যে জমি দেওয়া হত তাকে কী বলা হত?', opts: ['ইকতা', 'খালিসা', 'অমরম্', 'মনসব'], ans: 2, exp: 'সামন্তপ্রভুদের যে জমি প্রদান করা হত, বিজয়নগরের শাসনব্যবস্থায় তাকে অমরম্ বলা হত এবং তারা নিজেরা পলিয়গার নামে পরিচিত ছিল।'}
+    ]
+  },
+  6: {
+    name: 'Set 6',
+    icon: '🕌',
+    topic: 'বাহমনি রাজ্যের উদ্ভব ও ইতিহাস',
+    questions: [
+      {q: '১৩৪৭ খ্রিস্টাব্দে দাক্ষিণাত্যে স্বাধীন বাহমনি রাজ্য কে প্রতিষ্ঠা করেন?', opts: ['মামুদ গাওয়ান', 'হাসান গাঙ্গু বা জাফর খাঁ', 'প্রথম মহম্মদ শাহ', 'ফিরোজ শাহ'], ans: 1, exp: '১৩৪৭ খ্রিস্টাব্দের ৩ আগস্ট জাফর খাঁ আবুল মুজফফর আলাউদ্দিন বাহমন শাহ উপাধি ধারণ করে দাক্ষিণাত্যে স্বাধীন বাহমনি রাজ্য প্রতিষ্ঠা করেন।'},
+      {q: 'সাদাহ আমির কাদের বলা হত, যাঁদের বিদ্রোহের ফলেই বাহমনি রাজ্যের উদ্ভব ঘটেছিল?', opts: ['যাঁদের ওপর একশোটি গ্রামের শাসনভার অর্পিত ছিল', 'যাঁরা রাজদরবারের প্রধান মন্ত্রী ছিলেন', 'যাঁরা উলেমা বা ধর্মগুরু ছিলেন', 'যাঁরা বিজয়নগরের গুপ্তচর ছিলেন'], ans: 0, exp: 'মহম্মদ বিন তুঘলকের আমলে দাক্ষিণাত্যে এই সাদাহ আমির-দের ক্ষমতা খর্ব করতে গেলেই তাঁরা বিদ্রোহ ঘোষণা করেন এবং এর ফলেই বাহমনি রাজ্যের প্রতিষ্ঠা হয়।'},
+      {q: 'বুরহান-ই-মাসির এবং তবকাৎ-ই-আকবরি গ্রন্থ অনুযায়ী বাহমন শাহ পারস্যের কোন্ পৌরাণিক বীরের বংশধর ছিলেন?', opts: ['রুস্তম', 'বাহমন বিন ইসফান্দার', 'আলেকজান্ডার', 'সোলেমান'], ans: 1, exp: 'এই গ্রন্থগুলি অনুযায়ী হাসান পারস্যের বিখ্যাত পৌরাণিক বীর বাহমন বিন ইসফান্দারের বংশধর ছিলেন বলেই তাঁর প্রতিষ্ঠিত রাজবংশ বাহমনি বংশ নামে পরিচিত হয়।'},
+      {q: 'বাহমন শাহ তাঁর নবপ্রতিষ্ঠিত রাজ্যকে শাসনকার্যের সুবিধার্থে কয়টি তরফ বা প্রদেশে বিভক্ত করেন?', opts: ['তিনটি', 'চারটি', 'ছয়টি', 'আটটি'], ans: 1, exp: 'তিনি সমগ্র রাজ্যকে চারটি প্রদেশ বা তরফ-এ বিভক্ত করেন। সেগুলি হলো— গুলবর্গা, বেরার, বিদর ও দৌলতাবাদ।'},
+      {q: 'বাহমনি রাজ্যের প্রথম রাজধানী কোথায় ছিল?', opts: ['বিদর', 'বিজাপুর', 'গুলবর্গা', 'গোলকুন্ডা'], ans: 2, exp: 'বাহমনি রাজ্যের প্রতিষ্ঠাতা বাহমন শাহ তাঁর রাজ্যের রাজধানী হিসেবে গুলবার্গাকে নির্বাচন করেছিলেন।'},
+      {q: 'কোন্ বাহমনি সুলতানের সেনাবাহিনী বিজয়নগর রাজ্যে প্রবেশ করে চার লক্ষ মানুষকে হত্যা করেছিল?', opts: ['আলাউদ্দিন বাহমন শাহ', 'প্রথম মহম্মদ শাহ', 'দ্বিতীয় মহম্মদ শাহ', 'ফিরোজ শাহ'], ans: 1, exp: 'বিজয়নগর অধিপতি বুক্ক তাঁর কাছে পরাজিত হলে প্রথম মহম্মদ শাহের সেনাবাহিনী বিজয়নগর রাজ্যে প্রবেশ করে নির্মমভাবে চার লক্ষ মানুষকে হত্যা করে।'},
+      {q: 'কোন্ বাহমনি সুলতানকে ভারতের সাংস্কৃতিক কেন্দ্রে পরিণত করার উদ্যোগের জন্য এবং জ্ঞানের বিভিন্ন শাখায় আগ্রহের জন্য স্মরণ করা হয়?', opts: ['তাজউদ্দিন ফিরোজ শাহ', 'মুজাহিদ শাহ', 'তৃতীয় মহম্মদ শাহ', 'মামুদ শাহ'], ans: 0, exp: 'তাজউদ্দিন ফিরোজ শাহ (১৩৯৭-১৪২২ খ্রি.) আইন, ধর্মশাস্ত্র, চিকিৎসাবিদ্যা, উদ্ভিদবিদ্যা ও অর্থশাস্ত্রে আগ্রহী ছিলেন এবং বাহমনি রাজ্যকে ভারতের সাংস্কৃতিক কেন্দ্রে পরিণত করার উদ্যোগ নেন।'},
+      {q: 'তাজউদ্দিন ফিরোজ শাহ জ্যোতির্বিদ্যা চর্চার জন্য কোথায় একটি মানমন্দির নির্মাণ করেছিলেন?', opts: ['গুলবর্গা', 'বিদর', 'দৌলতাবাদ', 'বিজাপুর'], ans: 2, exp: 'জ্যোতির্বিদ্যা চর্চার জন্য প্রবল উৎসাহী ফিরোজ শাহ দৌলতাবাদে একটি মানমন্দির নির্মাণ করেন।'},
+      {q: 'ফিরোজ শাহের পর কে সিংহাসনে বসেন এবং নিরাপত্তা ও কৌশলগত কারণে রাজধানী গুলবর্গা থেকে বিদরে স্থানান্তরিত করেন?', opts: ['দ্বিতীয় মহম্মদ শাহ', 'আহম্মদ শাহ', 'আলাউদ্দিন আহম্মদ', 'হুমায়ূন শাহ'], ans: 1, exp: 'ফিরোজ শাহকে সিংহাসনচ্যুত করে তাঁর ভ্রাতা আহম্মদ শাহ (১৪২২-১৪৩৫ খ্রি.) সিংহাসনে বসেন এবং তিনি নিরাপত্তার কারণে গুলবর্গা থেকে বিদরে রাজধানী স্থানান্তরিত করেন।'},
+      {q: 'বাহমনি দরবারে পরদেশি কাদের বলা হত?', opts: ['স্থানীয় ধর্মান্তরিত মুসলিমদের', 'শিয়া সম্প্রদায়ভুক্ত তুর্কি, ইরানি ও আরবি গোষ্ঠীভুক্ত বিদেশি মুসলিমদের', 'হিন্দু সামন্তদের', 'ইউরোপীয় বণিকদের'], ans: 1, exp: 'বাহমনি দরবারে স্থানীয় দক্ষিণি মুসলিমদের পাশাপাশি বাইরে থেকে আসা তুর্কি, ইরানি ও আরবি মুসলিমরা পরদেশি বা বিদেশি নামে পরিচিত ছিল।'},
+      {q: 'কোন্ বাহমনি সুলতান প্রজাদের চিকিৎসার জন্য একটি হাসপাতাল নির্মাণ করেন?', opts: ['প্রথম মহম্মদ শাহ', 'তাজউদ্দিন ফিরোজ শাহ', 'দ্বিতীয় আলাউদ্দিন বা আলাউদ্দিন আহম্মদ', 'মামুদ শাহ'], ans: 2, exp: 'আহম্মদ শাহের পুত্র দ্বিতীয় আলাউদ্দিন (১৪৩৫-১৪৫৭ খ্রি.) একজন প্রজাহিতৈষী শাসক ছিলেন এবং প্রজাদের মঙ্গলার্থে একটি হাসপাতাল নির্মাণ করেন।'},
+      {q: 'বাহমনি সুলতান হুমায়ূন শাহের নিষ্ঠুরতার জন্য জনগণ তাঁকে কী নামে অভিহিত করত?', opts: ['চিরাগ', 'জালিম', 'খলিফা', 'কাফের'], ans: 1, exp: 'হুমায়ূন শাহ (১৪৫৭-১৪৬১ খ্রি.) ছিলেন অকর্মণ্য, অত্যাচারী ও রক্তলোলুপ শাসক। তাই জনগণ তাঁকে জালিম বা অত্যাচারী নামে অভিহিত করত।'},
+      {q: 'দুর্বল বাহমনি সুলতান তৃতীয় মহম্মদ শাহের আমলে কোন্ পরদেশি উজির রাজ্যের সর্বেসর্বা হয়ে ওঠেন এবং রাজ্যের চরম উন্নতি ঘটান?', opts: ['খাজা জাহান', 'মামুদ গাওয়ান', 'হাসান গাঙ্গু', 'মালিক আহম্মদ'], ans: 1, exp: 'এই দুর্বল শাসকদের সময় মামুদ গাওয়ান নামে জনৈক পরদেশি উজির হিসেবে রাজ্যের সর্বেসর্বা হয়ে ওঠেন।'},
+      {q: 'মামুদ গাওয়ান শিক্ষা প্রসারের জন্য কোথায় একটি বিশাল মাদ্রাসা নির্মাণ করেছিলেন?', opts: ['গুলবর্গা', 'দৌলতাবাদ', 'বিদর', 'গোলকুন্ডা'], ans: 2, exp: 'মামুদ গাওয়ান বিদ্যা ও বিদ্বানের পৃষ্ঠপোষক ছিলেন এবং তিনি বিদরে এক বিশাল মাদ্রাসা নির্মাণ করেন যেখানে প্রায় এক হাজার ছাত্রের পড়াশোনার ব্যবস্থা ছিল।'},
+      {q: 'মামুদ গাওয়ানের করুণ মৃত্যুদণ্ড কত খ্রিস্টাব্দে কার্যকর হয়, যার পর থেকে বাহমনি রাজ্যের পতন শুরু হয়?', opts: ['১৪৬৫ খ্রিস্টাব্দে', '১৪৮১ খ্রিস্টাব্দের ৫ এপ্রিল', '১৪৯২ খ্রিস্টাব্দে', '১৫১৮ খ্রিস্টাব্দে'], ans: 1, exp: 'দক্ষিণি গোষ্ঠীর ষড়যন্ত্রে সুলতান তৃতীয় মহম্মদ শাহ মামুদ গাওয়ানকে মৃত্যুদণ্ড দেন (৫ এপ্রিল, ১৪৮১ খ্রি.), যা ছিল বাহমনি রাজ্যের পক্ষে এক অপূরণীয় ক্ষতি।'}
+    ]
+  },
+  7: {
+    name: 'Set 7',
+    icon: '⚡',
+    topic: 'বাহমনি প্রশাসন, সমাজ ও পঞ্চরাজ্যের উদ্ভব',
+    questions: [
+      {q: 'বাহমনি রাজ্যের ১৭৯ বছরের ইতিহাসে মোট কতজন শাসক রাজত্ব করেছিলেন?', opts: ['দশজন', 'বারোজন', 'চোদ্দোজন', 'আঠারোজন'], ans: 2, exp: 'বাহমনি সাম্রাজ্যের ১৭৯ বছরের ইতিহাসে মোট চোদ্দোজন শাসক রাজত্ব করেছিলেন।'},
+      {q: 'বাহমনি প্রশাসনে প্রধানমন্ত্রীকে কী বলা হত?', opts: ['আমির-ই-জুমলা', 'উজির-ই-অসরফ', 'ভকিল-উস্-সুলতানাৎ', 'তরফদার'], ans: 2, exp: 'বাহমনি রাজ্যে সুলতানকে সাহায্য করার জন্য মন্ত্রীরা থাকতেন এবং তাঁদের মধ্যে প্রধানমন্ত্রীকে বলা হত ভকিল-উস্-সুলতানাৎ।'},
+      {q: 'বাহমনি যুগে প্রদেশের শাসনকর্তাকে কী বলা হত এবং মামুদ গাওয়ান প্রদেশের সংখ্যা ৪টি থেকে বাড়িয়ে কয়টি করেন?', opts: ['নায়েক; ৬টি', 'সুবাদার; ৫টি', 'তরফদার; ৮টি', 'শিকদার; ১০টি'], ans: 2, exp: 'প্রদেশের বা তরফের শাসনকর্তাকে বলা হত তরফদার এবং মামুদ গাওয়ান প্রশাসনিক কাজের সুবিধার্থে চারটি প্রদেশের পরিবর্তে আটটি প্রদেশ গঠন করেন।'},
+      {q: 'মামুদ গাওয়ান রাজ্যের সকল জমি জরিপ করে কৃষকের অধিকার ও রাষ্ট্রের প্রাপ্য সুস্পষ্ট করার জন্য জমি ও রাজস্বের যে হিসেব তৈরি করেন, তার নাম কী ছিল?', opts: ['হস্তবুদ', 'কবুলিয়ত', 'পাট্টা', 'জাবতি'], ans: 0, exp: 'মামুদ গাওয়ান রাজস্ব ব্যবস্থার উন্নতি ঘটিয়ে রাজ্যের সকল জমি জরিপ করে হস্তবুদ বা বিস্তৃত জমি ও রাজস্বের হিসেব তৈরি করেন।'},
+      {q: 'বাহমনি রাজ্যে আগত রুশ পরিব্রাজক নিকিতিন কত খ্রিস্টাব্দ থেকে কত খ্রিস্টাব্দ পর্যন্ত এই রাজ্যে পরিভ্রমণ করেন?', opts: ['১৪৪২-১৪৪৩ খ্রি.', '১৪৬৯-১৪৭৪ খ্রি.', '১৪৮১-১৪৮৫ খ্রি.', '১৫০০-১৫০৫ খ্রি.'], ans: 1, exp: 'রুশ পরিব্রাজক নিকিতিন ১৪৬৯ থেকে ১৪৭৪ খ্রিস্টাব্দ পর্যন্ত বাহমনি রাজ্যের বিভিন্ন অঞ্চল পরিভ্রমণ করেন।'},
+      {q: 'নিকিতিনের বিবরণ অনুযায়ী বাহমনি সমাজে মুসলিম অভিজাতরা কয়টি শ্রেণিতে বিভক্ত ছিল?', opts: ['দুটি (দক্ষিণি ও পরদেশি)', 'তিনটি (ইরানি, তুরানি, হিন্দুস্থানি)', 'চারটি', 'কোনো ভাগ ছিল না'], ans: 0, exp: 'মুসলিম অভিজাত সমাজ দুটি শ্রেণিতে বিভক্ত ছিল— স্থানীয় ধর্মান্তরিত মুসলিমরা দক্ষিণি এবং বিদেশ থেকে আগতরা পরদেশি নামে পরিচিত ছিল।'},
+      {q: 'বাহমনি যুগের স্থাপত্যের অনবদ্য নিদর্শন হিসেবে চাঁদমিনার কোথায় অবস্থিত?', opts: ['গুলবর্গা', 'বিদর', 'বিজাপুর', 'দৌলতাবাদ'], ans: 3, exp: 'বাহমনি রাজ্যের স্থাপত্য রীতিতে তুর্কি, মিশরীয় ও পারসিক রীতির সমন্বয় ঘটেছিল এবং দৌলতাবাদের চাঁদমিনার এর একটি শ্রেষ্ঠ নিদর্শন।'},
+      {q: 'বাহমনি রাজ্যের পতনের পর দাক্ষিণাত্যে কয়টি স্বাধীন মুসলিম রাজ্যের উদ্ভব ঘটে?', opts: ['তিনটি', 'চারটি', 'পাঁচটি', 'ছয়টি'], ans: 2, exp: 'বাহমনি রাজ্যের ধ্বংসস্তূপের ওপর বেরার, আহম্মদনগর, গোলকুন্ডা, বিজাপুর এবং বিদর— এই পাঁচটি স্বাধীন রাজ্যের উদ্ভব ঘটে।'},
+      {q: 'বাহমনি রাজ্য ভেঙে স্বাধীন বেরার রাজ্যের প্রতিষ্ঠা কে করেন?', opts: ['ফতেহউল্লা ইমাদ শাহ', 'মালিক আহম্মদ', 'কুতুবশাহ', 'ইউসুফ আদিল শাহ'], ans: 0, exp: '১৪৮৪ খ্রিস্টাব্দে বিজয়নগরের ধর্মান্তরিত হিন্দু ব্রাহ্মণ ফতেহউল্লা ইমাদ শাহ নিজেকে বেরারের স্বাধীন সুলতান বলে ঘোষণা করেন।'},
+      {q: '১৪৯০ খ্রিস্টাব্দে মালিক আহম্মদ কর্তৃক প্রতিষ্ঠিত স্বাধীন আহম্মদনগর রাজ্যে কোন্ রাজবংশ রাজত্ব করত?', opts: ['ইমাদশাহি', 'নিজামশাহি', 'কুতুবশাহি', 'আদিলশাহি'], ans: 1, exp: 'মালিক আহম্মদ নিজাম শাহ উপাধি ধারণ করে ১৪৯০ খ্রিস্টাব্দে স্বাধীন আহম্মদনগর রাজ্য প্রতিষ্ঠা করেন এবং তাঁর বংশ নিজামশাহি বংশ নামে পরিচিত হয়।'},
+      {q: 'গোলকুন্ডায় স্বাধীন কুতুবশাহি বংশ-এর প্রতিষ্ঠা কে করেন?', opts: ['ইউসুফ আদিল শাহ', 'মালিক আহম্মদ', 'কুতুবশাহ', 'আমির আলি বারিদ'], ans: 2, exp: 'মামুদ গাওয়ান কর্তৃক নিযুক্ত তেলেঙ্গানার শাসনকর্তা কুতুবশাহ ১৫১৮ খ্রিস্টাব্দে স্বাধীনতা ঘোষণা করেন এবং গোলকুন্ডায় কুতুবশাহি বংশ প্রতিষ্ঠা করেন।'},
+      {q: '১৫৬৫ খ্রিস্টাব্দের তালিকোটার যুদ্ধে বিজয়নগরের বিরুদ্ধে জোটে দাক্ষিণাত্যের কোন্ কোন্ রাজ্য অংশগ্রহণ করেছিল?', opts: ['বিজাপুর, গোলকুন্ডা, বিদর ও আহম্মদনগর', 'বেরার, গোলকুন্ডা, বিজাপুর ও বিদর', 'আহম্মদনগর, বেরার, বিজাপুর ও গোলকুন্ডা', 'বিজাপুর, বিদর, বেরার ও আহম্মদনগর'], ans: 0, exp: 'তালিকোটার যুদ্ধে বিজয়নগরের বিরুদ্ধে পাঁচটি রাজ্যের মধ্যে বেরার ছাড়া বাকি চারটি রাজ্য— বিজাপুর, গোলকুন্ডা, বিদর ও আহম্মদনগর জোটবদ্ধ হয়েছিল।'},
+      {q: 'স্বাধীন বিজাপুর রাজ্য কে প্রতিষ্ঠা করেন, যাঁর নামে আদিলশাহি বংশ পরিচিত?', opts: ['ফতেহউল্লা ইমাদ শাহ', 'ইউসুফ আদিল শাহ', 'ইব্রাহিম আদিল শাহ', 'কুতুবশাহ'], ans: 1, exp: 'বাহমনি রাজ্যের পতনের পর স্বাধীন বিজাপুর রাজ্যের প্রতিষ্ঠাতা ছিলেন ইউসুফ আদিল শাহ (১৪৯০ খ্রি.)।'},
+      {q: 'বিজাপুরের কোন্ সুলতানের নির্মিত বিশাল গোল গম্বুজ বিজাপুরের শক্তির প্রতীক হিসেবে দণ্ডায়মান?', opts: ['ইউসুফ আদিল শাহ', 'ইসমাইল আদিল শাহ', 'মুহাম্মদ আদিল শাহ', 'সিকান্দার আদিল শাহ'], ans: 2, exp: 'বিজাপুরের শাসক মুহাম্মদ আদিল শাহ (১৬২৭-১৬৫৬ খ্রি.) মুঘল আগ্রাসনের বিরুদ্ধে লড়াই করেন এবং তাঁর নির্মিত বিশাল গোল গম্বুজ স্থাপত্যের এক অনন্য নিদর্শন।'},
+      {q: 'বাহমনি বংশের শেষ সুলতান কলিমউল্লাহ শাহকে অপসারিত করে কে বিদরে স্বাধীন বারিদশাহি বংশ-এর প্রতিষ্ঠা করেন?', opts: ['কুতুবশাহ', 'ফতেহউল্লা ইমাদ শাহ', 'আমির আলি বারিদ', 'মালিক আহম্মদ'], ans: 2, exp: '১৫২৭ খ্রিস্টাব্দে আমির আলি বারিদ বাহমনি বংশের শেষ পুতুল সুলতান কলিমউল্লাহ শাহকে অপসারিত করে বিদরে নিজের সার্বভৌমত্ব ঘোষণা করেন।'}
+    ]
+  },
+  8: {
+    name: 'Set 8',
+    icon: '🏰',
+    topic: 'বাংলায় ইলিয়াসশাহি বংশের সূচনা ও শামসুদ্দিন ইলিয়াস শাহ',
+    questions: [
+      {q: '১৩৪২ খ্রিস্টাব্দে লখনৌতির সিংহাসনে বসে কে সমগ্র বাংলাকে একটি শাসনাধীনে এনে স্বাধীন বাংলার প্রতিষ্ঠা করেন?', opts: ['ফকরউদ্দিন মুবারক শাহ', 'শামসুদ্দিন ইলিয়াস শাহ', 'সিকান্দার শাহ', 'গিয়াসউদ্দিন আজম শাহ'], ans: 1, exp: 'মহম্মদ-বিন-তুঘলকের রাজত্বকালের শেষদিকে সুলতানি শাসনাধীন বাংলা যখন তিনটি অঞ্চলে বিভক্ত ছিল, তখন শামসুদ্দিন ইলিয়াস শাহ সমগ্র বাংলাকে ঐক্যবদ্ধ করে স্বাধীন ইলিয়াসশাহি বংশের প্রতিষ্ঠা করেন।'},
+      {q: 'ইলিয়াস শাহের আদি নিবাস কোথায় ছিল বলে পণ্ডিতরা মনে করেন?', opts: ['পূর্ব ইরানের সিজিস্তানে', 'তুরস্কের ফারগানায়', 'আরবের মক্কায়', 'আফগানিস্তানের কাবুলে'], ans: 0, exp: 'পণ্ডিতদের মতে তাঁর আদি নিবাস ছিল পূর্ব ইরানের সিজিস্তান এবং তিনি ভাগ্যান্বেষণে দিল্লিতে এসে পরে বাংলায় প্রবেশ করেন।'},
+      {q: 'ইলিয়াস শাহ সমগ্র বাংলাকে ঐক্যবদ্ধ করার পর ঐতিহাসিক শামস্-ই-সিরাজ আফিফ তাঁকে কী উপাধিতে ভূষিত করেন?', opts: ['গজনপতি', 'দনুজমর্দনদেব', 'শাহ-ই-বাঙ্গালা বা শাহ-ই-বাঙ্গালিয়ানা', 'চিরাগ-ই-বাঙ্গালা'], ans: 2, exp: 'ইলিয়াস শাহ-ই সর্বপ্রথম বাংলার সুলতানে পরিণত হন। একারণে ঐতিহাসিক আফিফ তাঁকে শাহ-ই-বাঙ্গলা এবং সুলতান-ই-বাঙ্গালা উপাধিতে ভূষিত করেন।'},
+      {q: '১৩৪৬ খ্রিস্টাব্দে ইলিয়াস শাহ কোথায় অভিযান করে সেখানকার বিখ্যাত পশুপতিনাথের মূর্তিটি তিন টুকরো করেন?', opts: ['কামরূপে', 'উড়িষ্যায়', 'নেপালে', 'জৌনপুরে'], ans: 2, exp: 'তিনি নেপাল আক্রমণ করে কাঠমান্ডু পর্যন্ত অগ্রসর হন এবং ১৩৫০ খ্রিস্টাব্দে নেপালের বিখ্যাত পশুপতিনাথের মূর্তিটি তিনি তিন টুকরো করেন।'},
+      {q: 'ইলিয়াস শাহের নেপাল অভিযানের প্রকৃত উদ্দেশ্য কী ছিল?', opts: ['ধর্মপ্রচার করা', 'নিছক ধনরত্ন লুণ্ঠন করা', 'সাম্রাজ্যের স্থায়ী বিস্তার', 'নেপালের রাজাকে সিংহাসনচ্যুত করা'], ans: 1, exp: 'ঐতিহাসিকদের মতে, রাজ্যজয় বা ধর্মোন্মাদনা নয়, তাঁর এই নেপাল অভিযানের মূল উদ্দেশ্য ছিল নিছক ধনরত্ন লুণ্ঠন করা।'},
+      {q: 'বখতিয়ার খলজির বঙ্গবিজয়ের পর থেকে বাংলার রাজধানী লখনৌতি থাকলেও ইলিয়াস শাহ তা কোথায় স্থানান্তরিত করেন?', opts: ['সোনারগাঁওয়ে', 'পাণ্ডুয়াতে', 'সপ্তগ্রামে', 'মুর্শিদাবাদে'], ans: 1, exp: 'লখনৌতি নদীর গতিপথ পরিবর্তনের ফলে অস্বাস্থ্যকর হয়ে পড়ায় তিনি পাণ্ডুয়াতে রাজধানী স্থানান্তরিত করেন।'},
+      {q: 'ইলিয়াস শাহের শক্তিবৃদ্ধিতে আতঙ্কিত হয়ে দিল্লির কোন্ সুলতান এক বিশাল সেনাবাহিনী নিয়ে বাংলা আক্রমণ করেছিলেন?', opts: ['মহম্মদ বিন তুঘলক', 'ফিরোজ শাহ তুঘলক', 'আলাউদ্দিন খলজি', 'সিকান্দার লোদি'], ans: 1, exp: 'ইলিয়াস শাহের চাম্পারন, গোরক্ষপুর ও বারাণসী জয়ে আতঙ্কিত হয়ে ফিরোজ তুঘলক বিপুল সেনাবাহিনী ও রণতরী নিয়ে বাংলার বিরুদ্ধে যুদ্ধযাত্রা করেন।'},
+      {q: 'ফিরোজ তুঘলক যখন বাংলা আক্রমণ করেন, তখন ইলিয়াস শাহ কোথায় আশ্রয় গ্রহণ করেছিলেন?', opts: ['লখনৌতি দুর্গে', 'সোনারগাঁও দুর্গে', 'একডালা দুর্গে', 'রোটাশগড় দুর্গে'], ans: 2, exp: 'ইলিয়াস শাহ সুলতানি বাহিনীর সঙ্গে কোনো সংঘর্ষে না গিয়ে পান্ডুয়ার অদূরে দুর্ভেদ্য জলবেষ্টিত একডালা দুর্গে আশ্রয় গ্রহণ করেন।'},
+      {q: 'ইলিয়াস শাহ ও ফিরোজ তুঘলকের মধ্যে শান্তি স্থাপিত হওয়ার পর কোন্ নদীটিকে উভয় পক্ষের মধ্যবর্তী সীমানা হিসেবে চিহ্নিত করা হয়?', opts: ['গঙ্গা নদী', 'ব্রহ্মপুত্র নদী', 'কোশী নদী', 'তিস্তা নদী'], ans: 2, exp: 'বর্ষার আগমনে এবং মশার উপদ্রবে বাধ্য হয়ে ফিরোজ তুঘলক পিছু হটেন। শেষে উভয় পক্ষের মধ্যে শান্তি স্থাপিত হলে কোশী নদীকে মধ্যবর্তী সীমানা হিসেবে চিহ্নিত করা হয়।'},
+      {q: 'ইলিয়াস শাহ কামরূপ আক্রমণ করে সেখানে কী স্থাপন করেছিলেন?', opts: ['একটি বিশাল মাদ্রাসা', 'একটি মুদ্রাশালা', 'একটি মানমন্দির', 'একটি দরগা'], ans: 1, exp: 'দিল্লির সঙ্গে শান্তি স্থাপনের পর তিনি কামরূপ আক্রমণ করেন এবং সেখানে একটি মুদ্রাশালা স্থাপন করেন।'},
+      {q: '"ইলিয়াস শাহের লক্ষ্মণাবতীর সিংহাসনে আরোহণের সঙ্গে সঙ্গে বাংলার ইতিহাসে এক নব যুগের সূচনা হয়।" —এই বিখ্যাত উক্তিটি কার?', opts: ['স্যার যদুনাথ সরকার', 'ড. নুরুল হাসান', 'ড. রমেশচন্দ্র মজুমদার', 'ড. আবদুল করিম'], ans: 0, exp: 'বাংলার রাজনৈতিক, সামাজিক ও সাংস্কৃতিক জীবনে এক ব্যাপক পরিবর্তনের স্বীকৃতিস্বরূপ স্যার যদুনাথ সরকার এই মন্তব্যটি করেছেন।'},
+      {q: 'দিল্লির বেতনভোগী ঐতিহাসিকরা ইলিয়াস শাহকে কী রূপে চিত্রিত করেছেন?', opts: ['শাহ-ই-বাঙ্গালা', 'ভাঙ্গখোর ও কুষ্ঠরোগী', 'হিন্দুস্তানের রক্ষক', 'পরম ধার্মিক'], ans: 1, exp: 'বাংলার স্বাধীন সত্তা দিল্লির পক্ষে মেনে নেওয়া সম্ভব ছিল না বলে দিল্লির বেতনভোগী ঐতিহাসিকরা বিদ্বেষপ্রণোদিত হয়ে তাঁকে ভাঙ্গখোর ও কুষ্ঠরোগী রূপে চিত্রিত করেছেন।'},
+      {q: 'ইলিয়াস শাহের রাজত্বকালে বাংলায় কোন্ বিখ্যাত মুসলিম সন্ত বসবাস করতেন?', opts: ['সেলিম চিশতি', 'নিজামউদ্দিন আউলিয়া', 'আখি সিরাজউদ্দিন ও আলা-উল হক', 'শেখ বাহাউদ্দিন জাকারিয়া'], ans: 2, exp: 'পির ও দরবেশদের প্রতি ইলিয়াস শাহের প্রবল শ্রদ্ধা ছিল এবং তাঁর সময়ে বাংলায় আখি সিরাজউদ্দিন, আলা-উল হক এবং রাজা বিয়াবনি নামক বিখ্যাত সন্তরা বসবাস করতেন।'},
+      {q: 'কোন্ ঐতিহাসিক বলেছেন যে ইলিয়াস শাহের পূর্বে বাংলার কোনো মুসলিম সুলতান সমগ্র বাংলার অধীশ্বর ছিলেন না?', opts: ['ড. তারাচাঁদ', 'ড. আবদুল করিম', 'রাখালদাস বন্দ্যোপাধ্যায়', 'ইরফান হাবিব'], ans: 1, exp: 'ড. আবদুল করিম তাঁর লেখায় উল্লেখ করেছেন যে ইলিয়াস শাহ-ই সর্বপ্রথম বাংলার তিনটি অঞ্চলকে একত্রিত করে সমগ্র বাংলার সুলতান হন।'},
+      {q: 'ইলিয়াস শাহের রাজত্বকাল সম্পর্কে জানার জন্য কোন্ গ্রন্থটি একটি মূল্যবান উপাদান?', opts: ['কিতাব-উল-হিন্দ', 'তারিখ-ই-ফিরোজশাহি', 'বাবরনামা', 'আকবরনামা'], ans: 1, exp: 'জিয়াউদ্দিন বারনি এবং শামস-ই-সিরাজ আফিফ রচিত তারিখ-ই-ফিরোজশাহি ইলিয়াস শাহের আমলের ইতিহাসের মূল্যবান উপাদান।'}
+    ]
+  },
+  9: {
+    name: 'Set 9',
+    icon: '👑',
+    topic: 'সিকান্দার শাহ, গিয়াসউদ্দিন আজম শাহ এবং রাজা গণেশ',
+    questions: [
+      {q: 'ইলিয়াস শাহের মৃত্যুর পর বাংলার সিংহাসনে কে বসেন?', opts: ['ফকরউদ্দিন মুবারক শাহ', 'সিকান্দার শাহ', 'গিয়াসউদ্দিন আজম শাহ', 'রুকনউদ্দিন বরবক শাহ'], ans: 1, exp: 'ইলিয়াস শাহের মৃত্যুর পর তাঁর সুযোগ্য পুত্র সিকান্দার শাহ (১৩৫৭-১৩৯১ খ্রি.) বাংলার সিংহাসনে বসেন।'},
+      {q: 'পাণ্ডুয়ার বিখ্যাত এবং সুবিশাল আদিনা মসজিদ কে নির্মাণ করেন?', opts: ['ইলিয়াস শাহ', 'সিকান্দার শাহ', 'গিয়াসউদ্দিন আজম শাহ', 'রাজা গণেশ'], ans: 1, exp: '১৩৬৯ খ্রিস্টাব্দে সিকান্দার শাহ পাণ্ডুয়ায় আদিনা মসজিদ নির্মাণ করেন, যা আয়তনের দিক থেকে ভারতের দ্বিতীয় বৃহত্তম মসজিদ ছিল।'},
+      {q: 'সোনারগাঁওয়ের ভূতপূর্ব শাসকের জামাতা জাফর খানের প্ররোচনায় ১৩৫৯ খ্রিস্টাব্দে ফিরোজ তুঘলক দ্বিতীয়বার বাংলা আক্রমণ করলে সিকান্দার শাহ কোথায় আশ্রয় নেন?', opts: ['লখনৌতিতে', 'গৌড়ে', 'একডালা দুর্গে', 'মুঙ্গেরে'], ans: 2, exp: 'পিতার অনুসৃত পন্থা অবলম্বন করে সিকান্দার শাহও একডালা দুর্গে আশ্রয় গ্রহণ করেন।'},
+      {q: 'পিতাকে হত্যা করে সিংহাসনে বসলেও বাংলার কোন্ শাসক অত্যন্ত জনপ্রিয়, রসিক ও ন্যায়পরায়ণ ছিলেন?', opts: ['সিকান্দার শাহ', 'গিয়াসউদ্দিন আজম শাহ', 'শিহাবউদ্দিন বায়জিদ শাহ', 'আলাউদ্দিন হোসেন শাহ'], ans: 1, exp: 'পিতা সিকান্দার শাহকে যুদ্ধে নিহত করে সিংহাসনে বসলেও গিয়াসউদ্দিন আজম শাহ (১৩৯১-১৪১১ খ্রি.) দীর্ঘ কুড়ি বছর অত্যন্ত সুনামের সঙ্গে বাংলা শাসন করেন।'},
+      {q: 'বিদেশের সাথে কূটনৈতিক সম্পর্ক স্থাপনে উৎসাহী গিয়াসউদ্দিন আজম শাহ কোন্ দেশের সম্রাট মুং-লোর কাছে তিনবার দূত পাঠান?', opts: ['পারস্যের', 'চিনের', 'মিশরের', 'আরবের'], ans: 1, exp: 'তিনি চিনা সম্রাট মুং-লোর কাছে ১৪০৫, ১৪০৮ এবং ১৪০৯ খ্রিস্টাব্দে তিনবার উপহার-সমেত দূত পাঠান।'},
+      {q: 'গিয়াসউদ্দিন আজম শাহ পারস্যের কোন্ অমর কবির সঙ্গে পত্রবিনিময় করতেন?', opts: ['ওমর খৈয়াম', 'হাফেজ', 'আল বিরুনি', 'আমির খসরু'], ans: 1, exp: 'তিনি শিল্প-সাহিত্যের পৃষ্ঠপোষক ছিলেন এবং পারস্যের অমর কবি হাফেজ-এর সঙ্গে তাঁর গভীর সখ্যতা ও পত্রবিনিময় চলত।'},
+      {q: 'গিয়াসউদ্দিন আজম শাহ কোথায় দুটি মাদ্রাসা এবং একটি সরাইখানা ও খাল নির্মাণ করেছিলেন?', opts: ['গৌড় ও পাণ্ডুয়ায়', 'মক্কা ও মদিনায়', 'দিল্লি ও লাহোরে', 'জৌনপুর ও আগ্রায়'], ans: 1, exp: 'তিনি কেবল বাংলার ভেতরেই নয়, সুদূর মক্কা ও মদিনাতেও মাদ্রাসা এবং মক্কায় একটি সরাইখানা ও খাল নির্মাণ করেছিলেন।'},
+      {q: 'ইলিয়াসশাহি বংশের প্রথম পর্যায়ের অবসানের পর কে বাংলার সিংহাসন দখল করে স্বল্পকালের জন্য হিন্দুশাসনের পুনঃপ্রতিষ্ঠা করেন?', opts: ['রাজা গণেশ', 'দনুজমর্দনদেব (যদু)', 'প্রতাপরুদ্র', 'রাজা কৃষ্ণচন্দ্র'], ans: 0, exp: '১৪১৫ খ্রিস্টাব্দে রাজা গণেশ দুর্বল সুলতান আলাউদ্দিন ফিরোজ শাহকে সিংহাসনচ্যুত ও হত্যা করে বাংলার সিংহাসন দখল করেন।'},
+      {q: 'রাজা গণেশ সিংহাসনে বসে কী উপাধি গ্রহণ করেছিলেন?', opts: ['গজনপতি', 'অরিরাজমর্দনশঙ্কর', 'দনুজমর্দনদেব', 'পরমভট্টারক'], ans: 2, exp: 'তিনি সিংহাসনে বসে দনুজমর্দনদেব উপাধি নেন এবং দরবারে বহু মুসলিম আদব-কায়দা বন্ধ করে হিন্দু রীতিনীতি প্রবর্তন করেন।'},
+      {q: 'রাজা গণেশ বাংলার কোন্ স্থানের ক্ষমতাশালী জমিদার ছিলেন?', opts: ['বর্ধমানের', 'রাজশাহির ভাতুড়িয়ার', 'চট্টগ্রামের', 'নদীয়ার'], ans: 1, exp: 'সিংহাসনে বসার পূর্বে তিনি ছিলেন রাজশাহির ভাতুড়িয়ার অত্যন্ত ক্ষমতাশীল ব্রাহ্মণ সামন্ত বা জমিদার।'},
+      {q: 'রাজা গণেশের ওপর ক্ষুব্ধ মুসলিম দরবেশদের আহ্বানে কোন্ জৌনপুর-অধিপতি বাংলা আক্রমণ করেছিলেন?', opts: ['মালিক সাওয়ার', 'ইব্রাহিম শর্কি', 'হুসাঙ্গ শাহ', 'সিকান্দার লোদি'], ans: 1, exp: 'রাজা গণেশ মুসলিম ফকির ও দরবেশদের শাস্তি দেওয়ায় তাঁরা জৌনপুরের শাসক ইব্রাহিম শর্কি-কে বিধর্মী গণেশের উচ্ছেদের জন্য আহ্বান জানান।'},
+      {q: 'জৌনপুর-অধিপতির আক্রমণের ফলে রাজা গণেশ সন্ধির শর্ত অনুযায়ী নিজ পুত্র যদুকে ইসলাম ধর্মে ধর্মান্তরিত করে সিংহাসনে বসান। ধর্মান্তরিত যদুর নাম কী হয়?', opts: ['শামসুদ্দিন ইলিয়াস শাহ', 'জালালউদ্দিন মহম্মদ শাহ', 'শিহাবউদ্দিন বায়জিদ', 'নাসিরউদ্দিন মামুদ শাহ'], ans: 1, exp: 'ইব্রাহিম শর্কির আক্রমণের মুখে পড়ে সন্ধির শর্ত হিসেবে যদুকে ইসলাম ধর্ম গ্রহণ করানো হয় এবং তাঁর নাম হয় জালালউদ্দিন মহম্মদ শাহ।'},
+      {q: 'গৌড়ের ফতে খানের সমাধি ভবন এবং পাণ্ডুয়ার একলাখি প্রাসাদ কার আমলে নির্মিত হয়?', opts: ['সিকান্দার শাহ', 'গিয়াসউদ্দিন আজম শাহ', 'রাজা গণেশ', 'রুকনউদ্দিন বরবক শাহ'], ans: 2, exp: 'রাজা গণেশ হিন্দু হলেও বেশ কয়েকটি স্থাপত্যকীর্তি নির্মাণ করেন, যার মধ্যে ফতে খানের সমাধি ও পাণ্ডুয়ার একলাখি প্রাসাদ উল্লেখযোগ্য।'},
+      {q: 'রাজা গণেশের ধর্মান্তরিত পুত্র জালালউদ্দিন মহম্মদ শাহ হিন্দু সম্প্রদায়ের ওপর অত্যাচার করলেও তাঁর কোন্ সেনাপতি একজন নিষ্ঠাবান হিন্দু ছিলেন?', opts: ['রাজ্যধর', 'রূপ গোস্বামী', 'মুকুন্দ দাস', 'অনন্ত সেন'], ans: 0, exp: 'জালালউদ্দিন গোঁড়া হলেও যোগ্যতাসম্পন্ন হিন্দুদের উচ্চপদে নিয়োগ করতেন এবং তাঁর সেনাপতি রাজ্যধর ছিলেন একজন নিষ্ঠাবান হিন্দু।'},
+      {q: 'জালালউদ্দিন মহম্মদ শাহ বাংলার রাজধানী জনাকীর্ণ পাণ্ডুয়া থেকে কোথায় স্থানান্তরিত করেন?', opts: ['মুঙ্গের', 'গৌড়', 'ঢাকা', 'লখনৌতি'], ans: 1, exp: 'তিনি পাণ্ডুয়া থেকে রাজধানী পুনরায় গৌড়ে স্থানান্তরিত করেন এবং পাণ্ডুয়াকে বহু মসজিদ, মাদ্রাসা ও সরাইখানা দ্বারা শোভিত করেন।'}
+    ]
+  },
+  10: {
+    name: 'Set 10',
+    icon: '⚜️',
+    topic: 'ইলিয়াসশাহি বংশের পুনঃপ্রতিষ্ঠা ও অবদান',
+    questions: [
+      {q: 'রাজা গণেশের বংশের শেষ সুলতান শামসুদ্দিন আহম্মদ শাহকে হত্যার পর বাংলার অভিজাতবর্গ কাকে সিংহাসনে বসিয়ে ইলিয়াসশাহি বংশের পুনঃপ্রতিষ্ঠা করেন?', opts: ['নাসিরউদ্দিন মামুদ শাহ', 'রুকনউদ্দিন বরবক শাহ', 'শামসুদ্দিন ইউসুফ শাহ', 'জালালউদ্দিন ফতে শাহ'], ans: 0, exp: '১৪৪২ খ্রিস্টাব্দে বাংলার দায়িত্বশীল অভিজাতবর্গ ইলিয়াস শাহের পৌত্র নাসিরউদ্দিন মামুদ শাহকে সিংহাসনে বসান।'},
+      {q: 'বাংলার সামন্ত শক্তিগুলির ওপর নির্ভরতা কমানোর জন্য কোন্ সুলতান বাংলায় প্রচুর বিদেশি হাবসি বা আবিসিনীয় সেনা আমদানি করেন?', opts: ['সিকান্দার শাহ', 'নাসিরউদ্দিন মামুদ শাহ', 'রুকনউদ্দিন বরবক শাহ', 'আলাউদ্দিন হোসেন শাহ'], ans: 2, exp: 'রুকনউদ্দিন বরবক শাহ (১৪৫৯-১৪৭৪ খ্রি.) তাঁর সৈন্যবাহিনীতে প্রচুর সংখ্যক হাবসি ক্রীতদাস ও সেনা আমদানি করেন।'},
+      {q: 'রুকনউদ্দিন বরবক শাহ তাঁর অসামান্য পাণ্ডিত্যের জন্য কী উপাধিতে ভূষিত হন?', opts: ['শাহ-ই-বাঙ্গালা', 'অল-ফাজিল ও অল-কামিল', 'জগৎ-ভূষণ', 'পণ্ডিত সার্বভৌম'], ans: 1, exp: 'তিনি শিক্ষা ও সাহিত্যের একজন বিরাট পৃষ্ঠপোষক ছিলেন এবং তাঁর পাণ্ডিত্যের জন্য তাঁকে অল ফাজিল ও অল কামিল উপাধিতে ভূষিত করা হয়।'},
+      {q: 'বিখ্যাত সংস্কৃতজ্ঞ পণ্ডিত বৃহস্পতি মিশ্র কার রাজসভায় এসেছিলেন, যিনি পদচন্দ্রিকা নামক টীকা রচনা করেন?', opts: ['রাজা গণেশ', 'রুকনউদ্দিন বরবক শাহ', 'আলাউদ্দিন হোসেন শাহ', 'গিয়াসউদ্দিন আজম শাহ'], ans: 1, exp: 'বরবক শাহের রাজসভায় পণ্ডিত বৃহস্পতি মিশ্র এসেছিলেন। অমরকোষ এর টীকা পদচন্দ্রিকা রচনার জন্য সুলতান তাঁকে পণ্ডিত সার্বভৌম উপাধি দেন।'},
+      {q: 'শ্রীকৃষ্ণবিজয় কাব্যের রচয়িতা মালাধর বসুকে রুকনউদ্দিন বরবক শাহ কী উপাধি দেন?', opts: ['সত্যরাজ খাঁ', 'পণ্ডিত সার্বভৌম', 'গুণরাজ খাঁ', 'দবির-ই-খাস'], ans: 2, exp: 'বরবক শাহ শ্রীকৃষ্ণবিজয় কাব্যের রচয়িতা মালাধর বসুকে গুণরাজ খাঁ এবং তাঁর পুত্রকে সত্যরাজ খাঁ উপাধিতে ভূষিত করেন।'},
+      {q: 'বাংলা ভাষায় রামায়ণ-রচয়িতা কৃত্তিবাস কোন্ সুলতানের পৃষ্ঠপোষকতা অর্জন করেছিলেন বলে মনে করা হয়?', opts: ['ইলিয়াস শাহ', 'রুকনউদ্দিন বরবক শাহ', 'রাজা গণেশ', 'নসরৎ শাহ'], ans: 1, exp: 'কৃত্তিবাস ওঝা তাঁর রামায়ণে গৌড়েশ্বর-এর কাছে বিপুল সংবর্ধনা পাওয়ার কথা বলেছেন, যাঁকে ঐতিহাসিকরা সুলতান রুকনউদ্দিন বরবক শাহ বলে চিহ্নিত করেছেন।'},
+      {q: 'শরফনামা কাব্যের রচয়িতা ফারসি পণ্ডিত ইব্রাহিম কায়ুম ফারুকি কার পৃষ্ঠপোষকতা লাভ করেন?', opts: ['গিয়াসউদ্দিন আজম শাহ', 'রুকনউদ্দিন বরবক শাহ', 'আলাউদ্দিন হোসেন শাহ', 'নসরৎ শাহ'], ans: 1, exp: 'বরবক শাহ কেবল সংস্কৃত বা বাংলার নয়, ফারসি সাহিত্যেরও সমঝদার ছিলেন এবং ইব্রাহিম কায়ুম ফারুকি তাঁর দরবারে পৃষ্ঠপোষকতা পেয়েছিলেন।'},
+      {q: 'বরবক শাহের আমলে কোন্ হিন্দু ব্যক্তি তাঁর অন্তরঙ্গ বা খাস চিকিৎসক ছিলেন?', opts: ['অনন্ত সেন', 'মুকুন্দ দাস', 'রূপ গোস্বামী', 'ভবদেব ভট্ট'], ans: 0, exp: 'বরবক শাহ বহু হিন্দুকে উচ্চপদে বসান, যাঁদের মধ্যে অনন্ত সেন এবং নারায়ণ দাস ছিলেন তাঁর খাস চিকিৎসক।'},
+      {q: 'শামসুদ্দিন ইউসুফ শাহের আমলে গৌড়ে কোন্ বিখ্যাত মসজিদটি নির্মিত হয়?', opts: ['আদিনা মসজিদ', 'ছোটোসোনা মসজিদ', 'লোটন মসজিদ', 'কদম রসুল মসজিদ'], ans: 2, exp: 'রুকনউদ্দিন বরবক শাহের পুত্র শামসুদ্দিন ইউসুফ শাহের (১৪৭৪-১৪৮১ খ্রি.) আমলে গৌড়ের বিখ্যাত লোটন মসজিদ-টি নির্মিত হয়।'},
+      {q: 'কোন্ ইলিয়াসশাহি সুলতানের রাজত্বকালে নবদ্বীপে শ্রীচৈতন্যদেবের জন্ম হয়?', opts: ['সিকান্দার শাহ', 'রুকনউদ্দিন বরবক শাহ', 'জালালউদ্দিন ফতে শাহ', 'আলাউদ্দিন হোসেন শাহ'], ans: 2, exp: 'ইলিয়াসশাহি বংশের শেষ সুলতান জালালউদ্দিন ফতে শাহের (১৪৮১-১৪৮৭ খ্রি.) রাজত্বকালেই নবদ্বীপে শ্রীচৈতন্যদেবের জন্ম হয়।'},
+      {q: 'দাখিল দরওয়াজা নামক গৌড়ের বিখ্যাত ও বিশাল তোরণটি কার স্থাপত্যকর্মের অনবদ্য নিদর্শন?', opts: ['সিকান্দার শাহ', 'গিয়াসউদ্দিন আজম শাহ', 'রুকনউদ্দিন বরবক শাহ', 'নসরৎ শাহ'], ans: 2, exp: 'তিনি শিল্পের অনুরাগী ছিলেন এবং তাঁর প্রাসাদটি অতি সুন্দর ছিল, যার অন্যতম নিদর্শন হলো গৌড়ের বিশাল তোরণ দাখিল দরওয়াজা।'},
+      {q: 'ইলিয়াসশাহি যুগের স্বর্ণমুদ্রাগুলিতে কীসের চিহ্ন বিদ্যমান ছিল?', opts: ['শুধুমাত্র আরবি হরফের', 'হিন্দু দেবদেবীর মূর্তির', 'শিল্প-সুষমার চিহ্ন', 'পারসিক রাজার মুখের ছবি'], ans: 2, exp: 'ইলিয়াসশাহি যুগে শিল্পের একটি স্বতন্ত্র রূপ গড়ে ওঠে এবং এই যুগের স্বর্ণমুদ্রাগুলিতেও অপরূপ শিল্প-সুষমার চিহ্ন বিদ্যমান ছিল।'},
+      {q: 'বরবক শাহ তাঁর কোন্ সেনাপতিকে রাজদ্রোহের অভিযোগে প্রাণদণ্ড দিয়েছিলেন?', opts: ['রাজ্যধর', 'দরবেশ ইসমাইল গাজি', 'পরাগল খাঁ', 'সিদি বদর'], ans: 1, exp: 'ঘোড়া ঘাটের দুর্গাধক্ষ্য ভান্দসী রায়ের অভিযোগে রুকনউদ্দিন বরবক শাহ তাঁর সেনাপতি দরবেশ ইসমাইল গাজিকে রাজদ্রোহের অভিযোগে প্রাণদণ্ডে দণ্ডিত করেন।'},
+      {q: 'কোন্ ঐতিহাসিক ইলিয়াসশাহি বংশের শাসনকাল সম্পর্কে বলেছেন যে, "বাংলার সামাজিক, সাংস্কৃতিক ও রাজনৈতিক ইতিহাসে ইলিয়াসশাহি সুলতানদের নাম স্বর্ণাক্ষরে লিখিত থাকিবে"?', opts: ['ড. রমেশচন্দ্র মজুমদার', 'স্যার যদুনাথ সরকার', 'ড. আবদুল করিম', 'রাখালদাস বন্দ্যোপাধ্যায়'], ans: 2, exp: 'ইলিয়াসশাহি বংশের আমলে বাংলায় যে নবজাগরণ ও রাজনৈতিক ঐক্যের সৃষ্টি হয়েছিল তার মূল্যায়নে ড. আবদুল করিম এই মন্তব্যটি করেন।'},
+      {q: 'ইলিয়াসশাহি যুগে বাংলায় একটি নতুন সম্প্রদায়ের উদ্ভব হয়, তারা কারা?', opts: ['পরদেশি মুসলিম', 'হিন্দু মধ্যবিত্ত সম্প্রদায়', 'হাবসি ক্রীতদাস', 'শিখ সম্প্রদায়'], ans: 1, exp: 'গ্রামীণ শাসকবর্গ এবং নগরাঞ্চলে দায়িত্বপ্রাপ্ত হিন্দু আমলাতন্ত্রের সমন্বয়ে বাংলায় এক নতুন হিন্দু মধ্যবিত্ত সম্প্রদায়ের আবির্ভাব ঘটে।'}
+    ]
+  },
+  11: {
+    name: 'Set 11',
+    icon: '👥',
+    topic: 'হাবসি শাসন ও হোসেনশাহি বংশের সূচনা',
+    questions: [
+      {q: 'বাংলার ইতিহাসে ১৪৮৭ থেকে ১৪৯৩ খ্রিস্টাব্দ পর্যন্ত ৬ বছরের সময়কাল কাদের শাসনকাল হিসেবে পরিচিত?', opts: ['আফগানদের', 'মুঘলদের', 'হাবসি বা আবিসিনীয়দের', 'মারাঠাদের'], ans: 2, exp: 'ইলিয়াসশাহি বংশের শেষ সুলতান ফতে শাহ নিহত হলে বাংলায় ১৪৮৭ থেকে ১৪৯৩ খ্রিস্টাব্দ পর্যন্ত ৬ বছর হাবসি ক্রীতদাসদের শাসন চলে।'},
+      {q: 'হাবসি শাসনকালকে ঐতিহাসিকরা বাংলার ইতিহাসে কী বলে অভিহিত করেছেন?', opts: ['স্বর্ণযুগ', 'অন্ধকারাচ্ছন্ন যুগ', 'নবজাগরণের যুগ', 'শিল্পবিপ্লবের যুগ'], ans: 1, exp: 'হত্যা, লুণ্ঠন, অত্যাচার ও ষড়যন্ত্র ছিল হাবসি শাসনের বৈশিষ্ট্য, তাই পণ্ডিতরা এই যুগকে অন্ধকারাচ্ছন্ন যুগ (Dark Age) বলে অভিহিত করেছেন।'},
+      {q: '৬ বছরের হাবসি শাসনে মোট কতজন হাবসি সুলতান বাংলার সিংহাসনে বসেছিলেন?', opts: ['দুজন', 'তিনজন', 'চারজন', 'ছয়জন'], ans: 2, exp: 'এই ছোট সময়কালের মধ্যেই চারজন হাবসি সুলতান (সুলতান শাহজাদা, সৈফউদ্দিন ফিরোজ, মামুদ শাহ ও শামসুদ্দিন মুজাফ্ফর) সিংহাসনে বসেন।'},
+      {q: 'হাবসি শাসনের অন্ধকারাচ্ছন্ন যুগে কোন্ শাসক সুশাসক ও প্রজাদরদী ছিলেন বলে একটি উজ্জ্বল ব্যতিক্রম দেখা যায়?', opts: ['সুলতান শাহজাদা (বারবক শাহ)', 'মামুদ শাহ', 'সৈফউদ্দিন ফিরোজ', 'সিদি বদর'], ans: 2, exp: 'মালিক আদিল নামক হাবসি সেনাপতি সৈফউদ্দিন ফিরোজ নাম নিয়ে সিংহাসনে বসেন এবং তাঁর তিন বছরের শাসনকাল হাবসি যুগের এক উজ্জ্বল ব্যতিক্রম ছিল।'},
+      {q: 'হাবসি শাসনের শেষ অত্যাচারী সুলতান কে ছিলেন, যাঁর বিরুদ্ধে জনগণ বিদ্রোহ করে এবং তাঁকে হত্যা করা হয়?', opts: ['সিদি বদর (শামসুদ্দিন মুজাফ্ফর)', 'মামুদ শাহ', 'সুলতান শাহজাদা', 'মালিক আদিল'], ans: 0, exp: 'সিদি বদর শামসুদ্দিন মুজাফ্ফর নাম নিয়ে সিংহাসনে বসেন। তাঁর রাজত্বকালে হত্যা, লুণ্ঠন ও জুলুম চরমে ওঠে, ফলে উজির হোসেন শাহের নেতৃত্বে তিনি নিহত হন।'},
+      {q: '১৪৯৩ খ্রিস্টাব্দে বাংলার সিংহাসনে বসে কে হোসেনশাহি বংশের প্রতিষ্ঠা করেন?', opts: ['নসরৎ শাহ', 'আলাউদ্দিন হোসেন শাহ', 'গিয়াসউদ্দিন মামুদ শাহ', 'শের খাঁ'], ans: 1, exp: 'অত্যাচারী হাবসি সুলতানকে হত্যার পর বাংলার অভিজাত সম্প্রদায় ও জনগণের অনুরোধে উজির হোসেন শাহ সিংহাসনে বসেন এবং হোসেনশাহি বংশের সূচনা করেন।'},
+      {q: 'আলাউদ্দিন হোসেন শাহ সিংহাসনে বসার আগে মুজাফফর শাহের অধীনে কোন্ পদে নিযুক্ত ছিলেন?', opts: ['কাজি', 'সেনাপতি', 'উজির', 'কোতোয়াল'], ans: 2, exp: 'তিনি মুজাফফর শাহের উজির বা প্রধানমন্ত্রী পদে নিযুক্ত ছিলেন এবং তাঁর নেতৃত্বেই বাংলার মানুষ অত্যাচারী হাবসি শাসকের বিরুদ্ধে সোচ্চার হয়।'},
+      {q: 'আলাউদ্দিন হোসেন শাহ সিংহাসনে বসে প্রথমেই কোন্ গুরুত্বপূর্ণ পদক্ষেপ গ্রহণ করেন?', opts: ['রাজধানী পরিবর্তন করেন', 'সেনাবাহিনীর অবাধ লুণ্ঠন বন্ধ করেন এবং হাবসিদের বিতাড়িত করেন', 'উড়িষ্যা আক্রমণ করেন', 'পরদেশি মুসলিমদের পদচ্যুত করেন'], ans: 1, exp: 'রাজ্যে শান্তি প্রতিষ্ঠার জন্য তিনি ১২ হাজার সেনাকে মৃত্যুদণ্ড দিয়ে লুণ্ঠন বন্ধ করেন এবং রাজ্যের সকল হাবসিকে বাংলা থেকে বিতাড়িত করেন।'},
+      {q: 'দিল্লির কোন্ সুলতান জৌনপুর অধিকার করলে জৌনপুরের বিতাড়িত সুলতান হোসেন শাহের কাছে আশ্রয় নেন?', opts: ['বহলুল লোদি', 'ইব্রাহিম লোদি', 'সিকান্দার লোদি', 'ফিরোজ শাহ তুঘলক'], ans: 2, exp: 'দিল্লির সুলতান সিকান্দার লোদি জৌনপুরের সুলতানকে পরাজিত করলে তিনি হোসেন শাহের কাছে আশ্রয় নেন।'},
+      {q: 'আলাউদ্দিন হোসেন শাহ ত্রিপুরার বিরুদ্ধে কয়টি অভিযান প্রেরণ করেছিলেন?', opts: ['একটি', 'দুটি', 'তিনটি', 'চারটি'], ans: 3, exp: 'তিনি তাঁর সাম্রাজ্য বিস্তারের নীতি হিসেবে ত্রিপুরা জয়ের উদ্দেশ্যে পরপর চারটি অভিযান পাঠান।'},
+      {q: 'হোসেন শাহের রাজত্বকালে হিন্দু ও মুসলিমদের মধ্যে সম্প্রীতি স্থাপনের জন্য কোন্ অভিনব পূজার প্রবর্তন করা হয়?', opts: ['দুর্গা পূজা', 'সত্যপিরের পূজা', 'মনসা পূজা', 'শীতলা পূজা'], ans: 1, exp: 'সংস্কৃত সত্য এবং আরবি পির শব্দের মিলনে হিন্দু-মুসলিম বৈষম্য দূর করার উদ্দেশ্যে সত্যপিরের (সত্যনারায়ণ) পূজা প্রবর্তন তাঁর এক উল্লেখযোগ্য কীর্তি।'},
+      {q: 'হোসেন শাহের ব্যক্তিগত কর্মাধ্যক্ষ বা দবির-ই-খাস পদে কে নিযুক্ত ছিলেন?', opts: ['রূপ গোস্বামী', 'সনাতন গোস্বামী', 'গোপীনাথ বসু', 'মুকুন্দ দাস'], ans: 1, exp: 'হোসেন শাহের শাসনব্যবস্থায় হিন্দুরা উচ্চ পদে নিযুক্ত ছিলেন, যাঁদের মধ্যে সনাতন গোস্বামী ছিলেন সুলতানের ব্যক্তিগত কর্মাধ্যক্ষ বা দবির-ই-খাস।'},
+      {q: 'হোসেন শাহের রাজস্ব সচিব বা সাকর মল্লিক কে ছিলেন?', opts: ['সনাতন গোস্বামী', 'রূপ গোস্বামী', 'অনুপ', 'গৌর মল্লিক'], ans: 1, exp: 'সনাতন গোস্বামীর ভাই রূপ গোস্বামী হোসেন শাহের রাজদরবারে রাজস্ব সচিব বা সাকর মল্লিক হিসেবে কাজ করতেন।'},
+      {q: 'হিন্দুরা আলাউদ্দিন হোসেন শাহের উদারতায় মুগ্ধ হয়ে তাঁকে কী উপাধিতে ভূষিত করেছিল?', opts: ['শাহ-ই-বাঙ্গালা', 'নৃপতি তিলক ও জগৎ-ভূষণ', 'পণ্ডিত সার্বভৌম', 'গুণরাজ খাঁ'], ans: 1, exp: 'তাঁর শাসনকালে হিন্দু ও মুসলিমদের মধ্যে প্রীতির সম্পর্ক স্থাপিত হওয়ায় হিন্দুরা তাঁকে ভালোবেসে নৃপতি তিলক ও জগৎ-ভূষণ অভিধায় ভূষিত করে।'},
+      {q: 'অনেক ঐতিহাসিক আলাউদ্দিন হোসেন শাহকে তাঁর ধর্মনিরপেক্ষতা ও উদারতার জন্য মধ্যযুগের কোন্ শাসকের সঙ্গে তুলনা করেছেন?', opts: ['সুলতান মামুদ', 'আকবর (বাংলার আকবর)', 'শাহজাহান', 'ঔরঙ্গজেব'], ans: 1, exp: 'তাঁর ধর্মনিরপেক্ষ প্রশাসন ও সর্বধর্মসমন্বয়ের আদর্শের কারণে ঐতিহাসিকরা তাঁকে মহান মুঘল সম্রাট আকবরের সঙ্গে তুলনা করে বাংলার আকবর বলে অভিহিত করেছেন।'}
+    ]
+  },
+  12: {
+    name: 'Set 12',
+    icon: '🕊️',
+    topic: 'আলাউদ্দিন হোসেন শাহের শাসন, ধর্ম ও সংস্কৃতি',
+    questions: [
+      {q: 'শ্রীচৈতন্যের নগর-সংকীর্তনের ওপর নবদ্বীপের কাজির নিষেধাজ্ঞা কে প্রত্যাহার করার ব্যবস্থা করেন?', opts: ['রুকনউদ্দিন বরবক শাহ', 'জালালউদ্দিন ফতে শাহ', 'আলাউদ্দিন হোসেন শাহ', 'নসরৎ শাহ'], ans: 2, exp: 'নবদ্বীপের কাজি নগর-সংকীর্তনের ওপর নিষেধাজ্ঞা আরোপ করলে হোসেন শাহ ব্যথিত হন এবং নিজে হস্তক্ষেপ করে এই নিষেধাজ্ঞা প্রত্যাহারের ব্যবস্থা করেন।'},
+      {q: 'হোসেন শাহের পৃষ্ঠপোষকতা লাভ করা রূপ গোস্বামী কোন্ দুটি বিখ্যাত সংস্কৃত গ্রন্থ রচনা করেন?', opts: ['দানসাগর ও অদ্ভুতসাগর', 'বিদগ্ধমাধব ও ললিতমাধব', 'পদচন্দ্রিকা ও স্মৃতিসার', 'গীতগোবিন্দ ও পবনদূত'], ans: 1, exp: 'বাংলার শিক্ষা ও সংস্কৃতির ইতিহাসে হোসেনশাহি আমল উজ্জ্বল। তাঁর রাজস্ব-সচিব রূপ গোস্বামী সংস্কৃতে বিদগ্ধমাধব ও ললিতমাধব নামে দুটি গ্রন্থ রচনা করেন।'},
+      {q: 'হোসেন শাহের সেনাপতি পরাগল খাঁর পৃষ্ঠপোষকতায় কে মহাভারতের বঙ্গানুবাদ করেন?', opts: ['কৃত্তিবাস', 'কবীন্দ্র পরমেশ্বর', 'মালাধর বসু', 'শ্রীকর নন্দী'], ans: 1, exp: 'হোসেনশাহি যুগে বাংলা সাহিত্যের অভূতপূর্ব বিকাশ ঘটে। পরাগল খাঁর আদেশে কবীন্দ্র পরমেশ্বর মহাভারতের বাংলা অনুবাদ করেছিলেন।'},
+      {q: 'পরাগল খাঁর পুত্র ছুটি খাঁ কার দ্বারা মহাভারতের অশ্বমেধ পর্ব বাংলায় অনুবাদ করান?', opts: ['শ্রীকর নন্দী', 'কবীন্দ্র পরমেশ্বর', 'বিজয় গুপ্ত', 'দামোদর'], ans: 0, exp: 'পরাগল খাঁর মৃত্যুর পর তাঁর পুত্র ছুটি খাঁও সাহিত্যের সমঝদার ছিলেন এবং তাঁর পৃষ্ঠপোষকতায় শ্রীকর নন্দী মহাভারতের অশ্বমেধ পর্ব বাংলায় অনুবাদ করেন।'},
+      {q: 'হোসেন শাহের উদ্যোগে গৌড়ে কোন্ বিখ্যাত মসজিদটি নির্মিত হয়েছিল?', opts: ['আদিনা মসজিদ', 'কদম রসুল মসজিদ', 'ছোটোসোনা মসজিদ (ফিরোজপুরের)', 'লোটন মসজিদ'], ans: 2, exp: 'হোসেন শাহ শিল্পেরও পৃষ্ঠপোষক ছিলেন। গৌড় নগরীর গুণমন্ত মসজিদ, দারসবাড়ি মসজিদ এবং ফিরোজপুরের ছোটোসোনা মসজিদ তাঁর অনবদ্য সৃষ্টি।'},
+      {q: 'হোসেন শাহের মুদ্রাশালার অধিকর্তা হিসেবে কোন্ হিন্দু কর্মচারী নিযুক্ত ছিলেন?', opts: ['অনুপ', 'কেশব ছেত্রী', 'মুকুন্দ দাস', 'বল্লভ'], ans: 0, exp: 'তাঁর ধর্মনিরপেক্ষ প্রশাসনে বহু হিন্দু উচ্চপদে ছিলেন, যাঁদের মধ্যে অনুপ ছিলেন মুদ্রাশালার অধিকর্তা।'},
+      {q: 'হোসেন শাহের ব্যক্তিগত চিকিৎসক কে ছিলেন?', opts: ['শ্রীকান্ত', 'মুকুন্দ দাস', 'চিরঞ্জীব সেন', 'দামোদর'], ans: 1, exp: 'মুকুন্দ দাস হোসেন শাহের ব্যক্তিগত চিকিৎসক হিসেবে কাজ করতেন এবং রাজদরবারে যথেষ্ট সম্মানিত ছিলেন।'},
+      {q: 'সুবুদ্ধি রায়ের কাহিনি কোন্ সুলতানের সঙ্গে জড়িত বলে কিংবদন্তি রয়েছে?', opts: ['ইলিয়াস শাহ', 'সিকান্দার শাহ', 'আলাউদ্দিন হোসেন শাহ', 'নসরৎ শাহ'], ans: 2, exp: 'কৃষ্ণদাস কবিরাজের চৈতন্য চরিতামৃত অনুসারে, প্রথম জীবনে সুবুদ্ধি রায়ের কাছে চাবুক খাওয়ার প্রতিশোধ হিসেবে হোসেন শাহ তাঁর স্ত্রীর প্ররোচনায় সুবুদ্ধি রায়ের মুখে নিজের বদনার জল ঢেলে তাঁর জাতিনাশ করেছিলেন।'},
+      {q: 'শ্রীচৈতন্যদেব কার শাসনকালে প্রেমধর্ম ও নাম-সংকীর্তন প্রচার করে বাংলায় সাংস্কৃতিক নবজাগরণ ঘটান?', opts: ['রুকনউদ্দিন বরবক শাহ', 'জালালউদ্দিন ফতে শাহ', 'আলাউদ্দিন হোসেন শাহ', 'রাজা গণেশ'], ans: 2, exp: 'ড. হাবিবউল্লাহ বলেছেন যে, হোসেন শাহের উদ্যোগে তৈরি উদার শাসনতান্ত্রিক পরিমণ্ডলের জন্যই শ্রীচৈতন্যের পক্ষে প্রেমধর্ম প্রচার করা সম্ভব হয়েছিল।'},
+      {q: 'হোসেন শাহকে কৃষ্ণের অবতার বলে কে উল্লেখ করেছেন?', opts: ['রূপ গোস্বামী', 'কবীন্দ্র পরমেশ্বর', 'কৃত্তিবাস', 'জয়ানন্দ'], ans: 1, exp: 'হোসেন শাহের মহানুভবতা ও জনপ্রিয়তার কারণে সমকালীন কবি কবীন্দ্র পরমেশ্বর তাঁকে কৃষ্ণের অবতার বলে উল্লেখ করেছেন।'},
+      {q: 'জয়ানন্দের চৈতন্যমঙ্গল অনুসারে, স্বয়ং চৈতন্যদেব হোসেন শাহকে কী বলে অভিহিত করেছিলেন?', opts: ['পরম বৈষ্ণব', 'মহা বিদগ্ধ রাজা', 'শাহ-ই-বাঙ্গালা', 'দনুজমর্দনদেব'], ans: 1, exp: 'চৈতন্যদেব হোসেন শাহ সম্পর্কে সশ্রদ্ধ মনোভাব পোষণ করতেন এবং তাঁকে মহা বিদগ্ধ রাজা বলে উল্লেখ করেছিলেন।'},
+      {q: 'হোসেন শাহ উড়িষ্যা আক্রমণ করলে কোন্ উড়িষ্যা-রাজ তাঁকে বাধা দেন?', opts: ['প্রতাপরুদ্র', 'পুরুষোত্তম', 'কপিলেন্দ্রদেব', 'অনন্তবর্মণ'], ans: 0, exp: 'উড়িষ্যারাজ প্রতাপরুদ্র তাঁকে প্রবল বাধা দেন। শেষ পর্যন্ত বাংলা-উড়িষ্যা সীমান্তে মান্দারান দুর্গটি হোসেন শাহ জয় করতে সক্ষম হন।'},
+      {q: 'মধ্যযুগের বাংলার সর্বাপেক্ষা গৌরবজনক অধ্যায় হিসেবে কোন্ বংশের শাসনকালকে চিহ্নিত করা হয়?', opts: ['সেন বংশ', 'ইলিয়াসশাহি বংশ', 'হোসেনশাহি বংশ', 'হাবসি শাসন'], ans: 2, exp: 'অধ্যাপক এন. বি. রায় এবং ড. কালীকিঙ্কর দত্ত-সহ বহু ঐতিহাসিক হোসেনশাহি বংশের শাসনকালকে মধ্যযুগের বাংলার সর্বাপেক্ষা গৌরবজনক অধ্যায় বলে চিহ্নিত করেছেন।'},
+      {q: 'হোসেন শাহের উজির কে ছিলেন, যাঁকে পুরন্দর খাঁ বলা হত?', opts: ['সনাতন গোস্বামী', 'গোপীনাথ বসু', 'গৌর মল্লিক', 'কেশব ছেত্রী'], ans: 1, exp: 'গোপীনাথ বসু হোসেন শাহের উজির বা মন্ত্রী ছিলেন এবং তিনি পুরন্দর খাঁ উপাধিতে পরিচিত ছিলেন।'},
+      {q: 'হোসেনশাহি আমলে ব্রাহ্মণ্য ও বৈষ্ণবধর্ম ছাড়াও কোন আঞ্চলিক ধর্মমতগুলির বিশেষ উদ্ভব ও প্রসার ঘটে?', opts: ['নাথ, ধর্মঠাকুর, মনসা ও চন্ডী', 'শাক্ত, কাপালিক ও সহজিয়া', 'সুফিবাদ ও বাউল', 'লিঙ্গায়েত ও অদ্বৈতবাদ'], ans: 0, exp: 'এই যুগে নাথ, ধর্মঠাকুর, মনসা ও চন্ডী প্রভৃতি আঞ্চলিক ধর্মমতের উদ্ভব হয় এবং মনসা ও চন্ডীর মাহাত্ম্য বর্ণনা করে বহু কাব্য রচিত হয়।'}
+    ]
+  },
+  13: {
+    name: 'Set 13',
+    icon: '🏛️',
+    topic: 'নসরৎ শাহ এবং হোসেনশাহি যুগের অবদান',
+    questions: [
+      {q: 'আলাউদ্দিন হোসেন শাহের মৃত্যুর পর বাংলার সিংহাসনে কে বসেন?', opts: ['গিয়াসউদ্দিন মামুদ শাহ', 'নসরৎ শাহ', 'আলাউদ্দিন ফিরোজ শাহ', 'শের খাঁ'], ans: 1, exp: '১৫১৯ খ্রিস্টাব্দে হোসেন শাহের মৃত্যুর পর তাঁর সুযোগ্য পুত্র নসরৎ শাহ (১৫১৯-১৫৩২ খ্রি.) বাংলার সিংহাসনে বসেন।'},
+      {q: 'নসরৎ শাহের রাজত্বকালে ১৫২৬ খ্রিস্টাব্দে কোন্ মুঘল সম্রাট ইব্রাহিম লোদিকে পরাজিত করে দিল্লির সিংহাসনে বসেন?', opts: ['হুমায়ুন', 'আকবর', 'বাবর', 'জাহাঙ্গীর'], ans: 2, exp: '১৫২৬ খ্রিস্টাব্দে পানিপথের প্রথম যুদ্ধে বাবর ইব্রাহিম লোদিকে পরাজিত করে দিল্লিতে মুঘল শাসন প্রতিষ্ঠা করেন।'},
+      {q: 'বাবর যখন পূর্ব ভারতের দিকে অগ্রসর হন, তখন নসরৎ শাহ কাদের সঙ্গে মিলে একটি মুঘল-বিরোধী শক্তিজোট গঠন করেন?', opts: ['মারাঠাদের সঙ্গে', 'রাজপুতদের সঙ্গে', 'আফগানদের সঙ্গে', 'পোর্তুগিজদের সঙ্গে'], ans: 2, exp: 'উত্তর ভারত থেকে বিতাড়িত আফগানরা পূর্ব ভারতে এলে নসরৎ শাহ জৌনপুর ও বিহারের আফগানদের (লোহানি বংশ) সঙ্গে মিলে মুঘল-বিরোধী জোট গঠন করেন।'},
+      {q: '১৫২৯ খ্রিস্টাব্দে কোন্ মুঘল সম্রাটের সঙ্গে নসরৎ শাহের সংঘর্ষ হয়, যেখানে তিনি পরাজিত হয়ে মৌখিক আনুগত্য মেনে নেন?', opts: ['হুমায়ুন', 'বাবর', 'শের শাহ', 'আকবর'], ans: 1, exp: '১৫২৯ খ্রিস্টাব্দে ঘর্ঘরার যুদ্ধে বাবরের সঙ্গে নসরৎ শাহের সংঘর্ষ হয় এবং পরাজিত হয়ে তিনি বাবরের প্রতি মৌখিক আনুগত্য জানাতে বাধ্য হন।'},
+      {q: 'গৌড়ের বিখ্যাত বড়োসোনা মসজিদ ও কদম রসুল কে নির্মাণ করেন?', opts: ['সিকান্দার শাহ', 'আলাউদ্দিন হোসেন শাহ', 'নসরৎ শাহ', 'গিয়াসউদ্দিন মামুদ শাহ'], ans: 2, exp: 'নসরৎ শাহও তাঁর পিতার মতো শিল্প ও স্থাপত্যের অনুরাগী ছিলেন। গৌড়ের বড়োসোনা মসজিদ ও কদম রসুল তাঁর দ্বারাই নির্মিত।'},
+      {q: 'শিল্প-বিশেষজ্ঞ ফার্গুসন কোন্ সৌধটিকে গৌড়ের সর্বোৎকৃষ্ট সৌধ বলে বর্ণনা করেছেন?', opts: ['দাখিল দরওয়াজা', 'লোটন মসজিদ', 'ছোটোসোনা মসজিদ', 'বড়োসোনা মসজিদ'], ans: 3, exp: 'নসরৎ শাহের আমলে নির্মিত বড়োসোনা মসজিদের গাম্ভীর্য ও সৌন্দর্য বর্ণনা করতে গিয়ে ফার্গুসন এটিকে গৌড়ের সর্বোৎকৃষ্ট সৌধ বলে অভিহিত করেছেন।'},
+      {q: 'নসরৎ শাহ তাঁর পিতার সমাধির ওপর পাণ্ডুয়ায় এক লক্ষ টাকা ব্যয়ে কোন্ সৌধ নির্মাণ করেন?', opts: ['একলাখি সৌধ (একলাখি মসজিদ)', 'আদিনা মসজিদ', 'কুতুব মিনার', 'চাঁদ মিনার'], ans: 0, exp: 'পিতার সমাধির ওপর নসরৎ শাহ এক লক্ষ টাকা ব্যয়ে পাণ্ডুয়ার একলাখি মসজিদ বা সৌধটি নির্মাণ করেছিলেন।'},
+      {q: 'হোসেনশাহি বংশের শেষ সুলতান কে ছিলেন, যাঁর রাজত্বকালে বাংলার শাসন মুঘল ও আফগানদের দ্বন্দ্বে জড়িয়ে পড়ে?', opts: ['আলাউদ্দিন ফিরোজ শাহ', 'গিয়াসউদ্দিন মামুদ শাহ', 'নসরৎ শাহ', 'শের খাঁ'], ans: 1, exp: 'গিয়াসউদ্দিন মামুদ শাহ (১৫৩৩-১৫৩৮ খ্রি.) ছিলেন নির্বোধ ও অদূরদর্শী। তাঁর সময়েই বাংলা হুমায়ুন এবং আফগান নেতা শের খাঁর দ্বন্দ্বে জড়িয়ে পড়ে।'},
+      {q: '১৫৩৮ খ্রিস্টাব্দে গিয়াসউদ্দিন মামুদ শাহকে বিতাড়িত করে কে বাংলা দখল করেন?', opts: ['বাবর', 'হুমায়ুন', 'শের খাঁ (শের শাহ)', 'আকবর'], ans: 2, exp: '১৫৩৮ খ্রিস্টাব্দে বিহারের আফগান নেতা শের খাঁ বাংলার শেষ হোসেনশাহি সুলতানকে বিতাড়িত করে বাংলা দখল করেন।'},
+      {q: 'হোসেনশাহি রাজত্বকালে বাংলার কোন্ শহরটি সংস্কৃত ব্যাকরণ, সাহিত্য, স্মৃতিশাস্ত্র ও ন্যায়শাস্ত্রের আলোচনার জন্য ভারতবিখ্যাত ছিল?', opts: ['গৌড়', 'ঢাকা', 'নবদ্বীপ', 'চট্টগ্রাম'], ans: 2, exp: 'হোসেনশাহি যুগে বাংলার নবদ্বীপ ছিল শিক্ষা ও পাণ্ডিত্যের একটি প্রধান কেন্দ্র এবং সমগ্র ভারতে এর খ্যাতি ছড়িয়ে পড়েছিল।'},
+      {q: 'হোসেনশাহি যুগে হস্তলিপিবিদ্যা যথেষ্ট উৎকর্ষ লাভ করেছিল, তা মূলত কোন্ কোন্ ভাষায় উৎকীর্ণ শিলালিপি থেকে জানা যায়?', opts: ['আরবি ও পারসিক', 'সংস্কৃত ও বাংলা', 'পালি ও প্রাকৃত', 'হিন্দি ও উর্দু'], ans: 0, exp: 'ড. তরফদারের মতে, আরবি ও পারসিক ভাষায় উৎকীর্ণ শিলালিপি এবং বিভিন্ন মুদ্রায় হস্তলিপিবিদ্যার এই উন্নতির পরিচয় পাওয়া যায়।'},
+      {q: 'পোর্তুগিজ পর্যটক বারবোসার বিবরণ অনুযায়ী হোসেনশাহি যুগে সমুদ্র উপকূল জুড়ে কী গড়ে উঠেছিল?', opts: ['সামরিক দুর্গ', 'অসংখ্য শহর ও বাণিজ্যকেন্দ্র', 'কেবল মৎস্যজীবীদের গ্রাম', 'প্রচুর মাদ্রাসা'], ans: 1, exp: 'এ সময় অর্থনৈতিক কার্যকলাপ ও বৈদেশিক বাণিজ্যে জোয়ার আসে এবং সমুদ্র উপকূল জুড়ে অসংখ্য শহর গড়ে ওঠে।'},
+      {q: 'হোসেনশাহি যুগে বাংলার অভ্যন্তরীণ বাণিজ্যের প্রধান কেন্দ্রগুলি কী কী ছিল?', opts: ['গৌড়, সোনারগাঁও, চট্টগ্রাম এবং হুগলির সপ্তগ্রাম', 'মুর্শিদাবাদ, ঢাকা, বর্ধমান ও নদীয়া', 'মালদহ, কোচবিহার, মেদিনীপুর ও কলকাতা', 'রাজমহল, বাঁকুড়া, পুরুলিয়া ও শ্রীহট্ট'], ans: 0, exp: 'বাণিজ্যের এই প্রসারের যুগে বাংলার অভ্যন্তরে এই চারটি স্থান উল্লেখযোগ্য বাণিজ্যকেন্দ্রে পরিণত হয়েছিল।'},
+      {q: 'কোন্ বংশের শাসনকালকে বাঙালি জাতির জাতীয় শাসনকাল বলে অভিহিত করা যায়?', opts: ['সেন বংশ', 'পাল বংশ', 'ইলিয়াসশাহি বংশ', 'হোসেনশাহি বংশ'], ans: 3, exp: 'রাজনৈতিক, সামাজিক ও সাংস্কৃতিক ক্ষেত্রে অভূতপূর্ব উন্নয়ন এবং বাঙালি প্রতিভার বিকাশের জন্য এই যুগকে বাঙালি জাতির জাতীয় শাসনকাল বলা হয়।'},
+      {q: 'হোসেনশাহি বংশের ৪৫ বছরের শাসনকাল প্রধানত কীসের জন্য বিখ্যাত ছিল?', opts: ['কেবল যুদ্ধবিগ্রহের জন্য', 'শান্তি, সমৃদ্ধি, ধর্মীয় সহিষ্ণুতা ও সাংস্কৃতিক উন্নয়ন', 'মারাঠাদের আক্রমণ প্রতিরোধের জন্য', 'ব্রিটিশদের বিতাড়ন করার জন্য'], ans: 1, exp: '১৪৯৩ থেকে ১৫৩৮ খ্রিস্টাব্দ পর্যন্ত এই কালপর্বে জীবনের সর্বক্ষেত্রেই বাংলা উন্নতির চরম শিখরে আরোহণ করে এবং অভূতপূর্ব শান্তি বিরাজ করে।'}
+    ]
+  },
+  14: {
+    name: 'Set 14',
+    icon: '📝',
+    topic: 'তৃতীয় অধ্যায়ের সামগ্রিক মূল্যায়ন ও বিবিধ',
+    questions: [
+      {q: 'সুলতানি যুগে দাক্ষিণাত্যে বাহমনি ও বিজয়নগর ছাড়াও বাংলা, গুজরাট, মালব, জৌনপুর প্রভৃতি রাজ্যের উত্থানের প্রধান কারণ কী ছিল?', opts: ['বাণিজ্যের ব্যাপক বৃদ্ধি', 'মহম্মদ বিন তুঘলকের রাজত্বকালের শেষদিকের দুর্বলতা ও বিশৃঙ্খলা', 'মুঘলদের আক্রমণ', 'ইউরোপীয় বণিকদের আগমন'], ans: 1, exp: 'মহম্মদ বিন তুঘলকের রাজত্বকালের শেষপর্বে দিল্লি সুলতানির সর্বত্র চরম অরাজকতা দেখা দিলে বিভিন্ন প্রাদেশিক শাসনকর্তারা স্বাধীনতা ঘোষণা করে এইসব আঞ্চলিক রাজ্যের উত্থান ঘটান।'},
+      {q: '১৩৯৮ খ্রিস্টাব্দে কার ভারত আক্রমণ দিল্লি সুলতানির পতনকে প্রায় সুনিশ্চিত করে দেয়?', opts: ['চেঙ্গিজ খান', 'তৈমুর লঙ', 'বাবর', 'নাদির শাহ'], ans: 1, exp: '১৩৯৮ খ্রিস্টাব্দে তৈমুর লঙের ভারত আক্রমণ দিল্লি সুলতানির পতনকে সুনিশ্চিত করে দেয়।'},
+      {q: 'নিকোলো কন্টি কোন্ দেশের পর্যটক ছিলেন যিনি বিজয়নগরে এসেছিলেন?', opts: ['পোর্তুগাল', 'ইটালি (ভেনিস)', 'পারস্য', 'মরক্কো'], ans: 1, exp: 'ইতালীয় পর্যটক (ভেনিস শহর থেকে আগত) নিকোলো কন্টি ১৪২০ খ্রিস্টাব্দে বিজয়নগর পরিভ্রমণ করেন।'},
+      {q: 'পোর্তুগিজ পর্যটক ফার্নাও নুনিজ কোন্ সাম্রাজ্যের বিস্তারিত বর্ণনা দিয়েছেন?', opts: ['বাহমনি সাম্রাজ্যের', 'মুঘল সাম্রাজ্যের', 'বিজয়নগর সাম্রাজ্যের', 'বাংলার ইলিয়াসশাহি বংশের'], ans: 2, exp: 'ফার্নাও নুনিজ (১৪৩৫ খ্রি.) ছিলেন একজন পোর্তুগিজ পর্যটক, যিনি বিজয়নগরের সমাজ, নারী, প্রশাসন ও খাদ্যাভ্যাস সম্পর্কে বিস্তারিত বিবরণ দিয়েছেন।'},
+      {q: 'বাংলায় ইলিয়াস শাহের আমলে মুসলিম ধর্ম ও সংস্কৃতি মূলত কোথায় সীমাবদ্ধ ছিল?', opts: ['গ্রামাঞ্চলে', 'শহরাঞ্চলে', 'পাহাড়ি অঞ্চলে', 'সমুদ্র উপকূলে'], ans: 1, exp: 'ইলিয়াসশাহি আমলেও মুসলিম শাসনের প্রভাব মূলত শহরাঞ্চলেই সীমাবদ্ধ ছিল। মুসলিম শাসকরা তখনও গ্রামাঞ্চলে প্রবেশের সাহস পাননি।'},
+      {q: 'ইলিয়াসশাহি ও হোসেনশাহি যুগের স্থাপত্যে কোন্ শিল্পের প্রভাব বেশি পরিলক্ষিত হয়?', opts: ['ইউরোপীয় শিল্পরীতি', 'বাংলার নিজস্ব স্বতন্ত্র শিল্পরীতি', 'সম্পূর্ণ পারসিক শিল্পরীতি', 'দক্ষিণ ভারতের দ্রাবিড় শিল্পরীতি'], ans: 1, exp: 'এই সুলতানদের পৃষ্ঠপোষকতায় বাংলাদেশ এক স্বতন্ত্র শিল্পরীতি গড়ে ওঠে, যা অন্যান্য প্রদেশের শিল্পরীতি থেকে সম্পূর্ণভাবে পৃথক ছিল।'},
+      {q: 'কোন্ সুলতান বাংলার রাজধানী লখনৌতি থেকে পান্ডুয়ায় স্থানান্তরিত করেছিলেন কারণ লখনৌতির নদীপথের পরিবর্তন হয়েছিল?', opts: ['গিয়াসউদ্দিন আজম শাহ', 'সিকান্দার শাহ', 'শামসুদ্দিন ইলিয়াস শাহ', 'রুকনউদ্দিন বরবক শাহ'], ans: 2, exp: 'নদীর গতিপথ পরিবর্তনের ফলে লখনৌতি অস্বাস্থ্যকর হয়ে পড়ায় ইলিয়াস শাহ পান্ডুয়াতে তাঁর রাজধানী স্থানান্তরিত করেন।'},
+      {q: 'মধ্যযুগের বাংলার ইতিহাসে দনুজমর্দনদেব উপাধি কে ধারণ করেছিলেন?', opts: ['জালালউদ্দিন মহম্মদ শাহ', 'রাজা গণেশ', 'প্রতাপরুদ্র', 'শ্রীচৈতন্যদেব'], ans: 1, exp: 'ইলিয়াসশাহি বংশের প্রথম পর্যায়ের অবসানের পর হিন্দু শাসন প্রতিষ্ঠা করে রাজা গণেশ দনুজমর্দনদেব উপাধি নেন।'},
+      {q: 'ইলিয়াসশাহি ও হোসেনশাহি সুলতানরা প্রশাসন পরিচালনার জন্য কাদের ব্যাপকভাবে সাহায্য নিতেন?', opts: ['শুধুমাত্র বহিরাগত তুর্কিদের', 'ইউরোপীয় বণিকদের', 'যোগ্যতাসম্পন্ন হিন্দুদের', 'কেবল হাবসি ক্রীতদাসদের'], ans: 2, exp: 'এই দুই রাজবংশই বাংলার স্থানীয় যোগ্যতাসম্পন্ন হিন্দুদের প্রশাসনের সঙ্গে যুক্ত করে এক ধর্মনিরপেক্ষ প্রশাসন গড়ে তোলেন।'},
+      {q: 'গিয়াসউদ্দিন আজম শাহের আমলে চিনের সঙ্গে বাণিজ্যের জন্য কোন্ বন্দর থেকে জাহাজ চলাচল করত?', opts: ['তাম্রলিপ্ত', 'সপ্তগ্রাম', 'চট্টগ্রাম বন্দর', 'সোনারগাঁও'], ans: 2, exp: 'তাঁর আমলে চিনের সঙ্গে বাংলার বাণিজ্যিক যোগাযোগ ঘনিষ্ঠতর হয় এবং চট্টগ্রাম বন্দর থেকে বাণিজ্যিক জাহাজ চিনে চলাচল করতে থাকে।'},
+      {q: 'তারিখ-ই-ফিরোজশাহি গ্রন্থ থেকে আমরা বাংলার কোন্ বিখ্যাত শাসকের দিল্লির সঙ্গে বিরোধের কথা জানতে পারি?', opts: ['রাজা গণেশ', 'আলাউদ্দিন হোসেন শাহ', 'শামসুদ্দিন ইলিয়াস শাহ', 'নসরৎ শাহ'], ans: 2, exp: 'জিয়াউদ্দিন বারনি এবং শামস-ই-সিরাজ আফিফ রচিত তারিখ-ই-ফিরোজশাহি গ্রন্থে ফিরোজ শাহ তুঘলক ও ইলিয়াস শাহের যুদ্ধের বিস্তারিত বিবরণ পাওয়া যায়।'},
+      {q: 'গৌড়ের বিখ্যাত দাখিল দরওয়াজা কে নির্মাণ করেন?', opts: ['রুকনউদ্দিন বরবক শাহ', 'সিকান্দার শাহ', 'আলাউদ্দিন হোসেন শাহ', 'গিয়াসউদ্দিন মামুদ শাহ'], ans: 0, exp: 'ইলিয়াসশাহি বংশের পুনঃপ্রতিষ্ঠার পর রুকনউদ্দিন বরবক শাহের স্থাপত্যকর্মের এক অনবদ্য নিদর্শন হলো গৌড়ের দাখিল দরওয়াজা।'},
+      {q: 'হোসেনশাহি যুগে চৈতন্যদেব কর্তৃক প্রচারিত প্রেমধর্ম বাংলার সমাজে কী পরিবর্তন এনেছিল?', opts: ['হিন্দু ও মুসলিমদের মধ্যে চরম দ্বন্দ্ব', 'কেবল বৌদ্ধ ধর্মের প্রসার', 'হিন্দু-মুসলিম ঐক্য, সামাজিক সাম্য ও সাংস্কৃতিক নবজাগরণ', 'বহির্বিশ্বের সাথে বাণিজ্য বন্ধ'], ans: 2, exp: 'চৈতন্যদেব প্রচারিত ভক্তিধর্ম ও নাম-সংকীর্তন জাতিভেদ ও ধর্মীয় বিভেদের বিরোধিতা করে বাংলায় সাংস্কৃতিক নবজাগরণ ঘটিয়েছিল।'},
+      {q: 'মনসামঙ্গল কাব্যের রচয়িতা বিপ্রদাস পিপিলাই কার সমসাময়িক ছিলেন?', opts: ['ইলিয়াস শাহের', 'আলাউদ্দিন হোসেন শাহের', 'রাজা গণেশের', 'রুকনউদ্দিন বরবক শাহের'], ans: 1, exp: 'বিপ্রদাস পিপিলাই-এর মনসামঙ্গল, কৃষ্ণদাস কবিরাজের চৈতন্যচরিতামৃত প্রভৃতি গ্রন্থ আলাউদ্দিন হোসেন শাহের আমলেই রচিত হয়।'},
+      {q: 'বাংলার ইতিহাসে ইলিয়াসশাহি ও হোসেনশাহি যুগকে একত্রে কী বলা যেতে পারে?', opts: ['যুদ্ধ ও ধ্বংসের যুগ', 'বিদেশি শোষণের যুগ', 'সাংস্কৃতিক ও অর্থনৈতিক অগ্রগতির এক সুবর্ণযুগ', 'মারাঠা আধিপত্যের যুগ'], ans: 2, exp: 'এই দুই রাজবংশের আমলেই বাংলা ভাষার বিকাশ, শিল্প-স্থাপত্যের উন্নতি, ধর্মনিরপেক্ষ প্রশাসন এবং অর্থনৈতিক সমৃদ্ধি ঘটেছিল, যা বাংলার ইতিহাসের সুবর্ণযুগ হিসেবে পরিচিত।'}
+    ]
+  }
+};
+
+// ============================================================
+//  গ্লোবাল ভেরিয়েবল
+// ============================================================
+const LABELS = ['ক', 'খ', 'গ', 'ঘ'];
+let currentSetId = 1;
+let cur = 0, score = 0, wrong = 0, answered = false, timerInterval, timeLeft = 10 * 60;
+let userAnswers = [];
+let isLoggedIn = false;
+let currentUser = null;
+let pendingSetId = null;
+
+// ============================================================
+//  হাব পেজ বিল্ড
+// ============================================================
+function buildHub() {
+  const grid = document.getElementById('setGrid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= TOTAL_SETS; i++) {
+    const set = allSets[i];
+    const card = document.createElement('div');
+    card.className = 'set-card';
+    card.innerHTML = `
+      <div class="icon">${set.icon}</div>
+      <div class="set-num">${set.name}</div>
+      <div class="set-title">${set.topic}</div>
+      <div class="set-meta"><span>১৫ প্রশ্ন</span><span>১০ মিনিট</span></div>
+    `;
+    card.onclick = () => selectSet(i);
+    grid.appendChild(card);
+  }
+}
+
+function showHub() {
+  document.getElementById('hubPage').classList.remove('hidden');
+  document.getElementById('testArea').classList.add('hidden');
+  document.getElementById('resultWrap').classList.remove('show');
+  document.getElementById('timerBox').classList.remove('danger');
+  clearInterval(timerInterval);
+  if (currentUser) {
+    document.getElementById('hubUserInfo').innerHTML = `👤 ${currentUser.username} — Test দিতে সেট সিলেক্ট করো।`;
+  } else {
+    document.getElementById('hubUserInfo').innerHTML = '';
+  }
+}
+
+function goToHub() {
+  document.getElementById('testArea').classList.add('hidden');
+  document.getElementById('resultWrap').classList.remove('show');
+  document.getElementById('hubPage').classList.remove('hidden');
+  document.getElementById('timerBox').classList.remove('danger');
+  clearInterval(timerInterval);
+  isLoggedIn = false;
+  currentUser = null;
+}
+
+// ============================================================
+//  সেট সিলেক্ট - সবসময় লগইন চেক
+// ============================================================
+function selectSet(id) {
+  currentSetId = id;
+  const set = allSets[id];
+  pendingSetId = id;
+  document.getElementById('loginSetName').textContent = `📚 ${set.name} — ${set.topic}`;
+  document.getElementById('loginOverlay').classList.add('active');
+  document.getElementById('loginUsername').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('limitInfo').style.display = 'none';
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginUsername').focus();
+}
+
+// ============================================================
+//  লগইন ফাংশন
+// ============================================================
+function doLoginFromSet() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  const errorEl = document.getElementById('loginError');
+  const limitInfo = document.getElementById('limitInfo');
+  const loginBtn = document.getElementById('loginBtn');
+
+  if (!username || !password) {
+    errorEl.textContent = '❌ দয়া করে ইউজারনেম ও পাসওয়ার্ড দিন।';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  const user = userData.find(u => u.username === username && u.password === password);
+  if (user) {
+    const setAttempts = user.attempts[currentSetId] || 0;
+    if (setAttempts >= MAX_ATTEMPTS) {
+      limitInfo.style.display = 'block';
+      document.getElementById('limitMsg').textContent = `আপনি এই অ্যাকাউন্ট দিয়ে ${allSets[currentSetId].name} এর সর্বোচ্চ ${MAX_ATTEMPTS} বার Test দিয়েছেন। আর Test দেওয়া সম্ভব নয়।`;
+      errorEl.style.display = 'none';
+      loginBtn.disabled = true;
+      return;
+    }
+    
+    isLoggedIn = true;
+    currentUser = user;
+    errorEl.style.display = 'none';
+    limitInfo.style.display = 'none';
+    loginBtn.disabled = false;
+    document.getElementById('loginOverlay').classList.remove('active');
+    
+    document.getElementById('hubUserInfo').innerHTML = `👤 ${currentUser.username} — Test দিতে সেট সিলেক্ট করো।`;
+    
+    startQuiz(currentSetId);
+  } else {
+    errorEl.textContent = '❌ ভুল ইউজারনেম বা পাসওয়ার্ড। আবার চেষ্টা করুন।';
+    errorEl.style.display = 'block';
+    limitInfo.style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLoginFromSet();
+  });
+  document.getElementById('loginUsername').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLoginFromSet();
+  });
+  buildHub();
+  document.getElementById('hubPage').classList.remove('hidden');
+  document.getElementById('testArea').classList.add('hidden');
+  document.getElementById('resultWrap').classList.remove('show');
+});
+
+// ============================================================
+//  কুইজ ফাংশন
+// ============================================================
+function startQuiz(setId) {
+  if (!isLoggedIn || !currentUser) return;
+  
+  const setAttempts = currentUser.attempts[setId] || 0;
+  if (setAttempts >= MAX_ATTEMPTS) {
+    alert(`⚠️ আপনি এই সেটের সর্বোচ্চ ${MAX_ATTEMPTS} বার Test দিয়েছেন।`);
+    return;
+  }
+  
+  currentUser.attempts[setId] = (currentUser.attempts[setId] || 0) + 1;
+  
+  cur = 0; score = 0; wrong = 0; answered = false;
+  timeLeft = 10 * 60; userAnswers = [];
+  document.getElementById('hubPage').classList.add('hidden');
+  document.getElementById('resultWrap').classList.remove('show');
+  document.getElementById('testArea').classList.remove('hidden');
+  document.getElementById('timerBox').classList.remove('danger');
+  
+  const set = allSets[setId];
+  document.getElementById('testSetLabel').textContent = set.name;
+  document.getElementById('testSetName').textContent = 'শিক্ষাবিজ্ঞান';
+  document.getElementById('testTopic').textContent = set.topic;
+  
+  clearInterval(timerInterval);
+  timerInterval = setInterval(tick, 1000);
+  loadQ();
+}
+
+function tick() {
+  timeLeft--;
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  document.getElementById('timerDisplay').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  if (timeLeft <= 60) document.getElementById('timerBox').classList.add('danger');
+  if (timeLeft <= 0) { clearInterval(timerInterval); showResult(); }
+}
+
+function loadQ() {
+  answered = false;
+  const set = allSets[currentSetId];
+  const q = set.questions[cur];
+  document.getElementById('qNum').textContent = 'প্রশ্ন ' + (cur + 1) + ' / ' + set.questions.length;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressFill').style.width = ((cur + 1) / set.questions.length * 100) + '%';
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('nextBtn').textContent = cur === set.questions.length - 1 ? 'ফলাফল দেখো' : 'পরবর্তী →';
+  document.getElementById('explanation').classList.remove('show');
+
+  const opts = document.getElementById('qOpts');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<div class="opt-circle">' + LABELS[i] + '</div><div class="opt-text">' + o + '</div>';
+    btn.onclick = () => answer(i);
+    opts.appendChild(btn);
+  });
+}
+
+function answer(i) {
+  if (answered) return;
+  answered = true;
+  const set = allSets[currentSetId];
+  const q = set.questions[cur];
+  userAnswers[cur] = i;
+  const btns = document.querySelectorAll('.opt');
+  btns.forEach(b => b.classList.add('disabled'));
+  btns[q.ans].classList.add('correct');
+  if (i !== q.ans) { btns[i].classList.add('wrong'); wrong++; }
+  else score++;
+  document.getElementById('scoreShow').textContent = 'সঠিক: ' + score + ' | ভুল: ' + wrong;
+  document.getElementById('explanationText').innerHTML = '<strong>ব্যাখ্যা:</strong> ' + q.exp;
+  document.getElementById('explanation').classList.add('show');
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQ() {
+  const set = allSets[currentSetId];
+  cur++;
+  if (cur >= set.questions.length) { clearInterval(timerInterval); showResult(); return; }
+  loadQ();
+}
+
+function showResult() {
+  document.getElementById('testArea').classList.add('hidden');
+  const rw = document.getElementById('resultWrap');
+  rw.classList.add('show');
+  const set = allSets[currentSetId];
+  const pct = Math.round(score / set.questions.length * 100);
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('rbCorrect').textContent = score;
+  document.getElementById('rbWrong').textContent = wrong;
+  document.getElementById('rbPct').textContent = pct + '%';
+  
+  const remaining = MAX_ATTEMPTS - (currentUser.attempts[currentSetId] || 0);
+  document.getElementById('attemptInfo').innerHTML = `👤 ${currentUser.username} — ${set.name}: বাকি আছে <strong>${remaining}</strong> বার Test দেওয়ার সুযোগ (সর্বোচ্চ ${MAX_ATTEMPTS} বার)`;
+  
+  const grades = [
+    [90, '🌟', 'অসাধারণ!'],
+    [70, '👍', 'খুব ভালো!'],
+    [50, '📚', 'ভালো চেষ্টা!'],
+    [0, '💪', 'চেষ্টা চালিয়ে যাও!']
+  ];
+  const g = grades.find(x => pct >= x[0]);
+  document.getElementById('resultIcon').textContent = g[1];
+  document.getElementById('resultGrade').textContent = g[2] + ' (' + set.topic + ')';
+}
+
+function showReview() {
+  document.getElementById('resultWrap').classList.remove('show');
+  document.getElementById('testArea').classList.remove('hidden');
+  cur = 0;
+  loadReview();
+}
+
+function loadReview() {
+  const set = allSets[currentSetId];
+  if (cur >= set.questions.length) { 
+    document.getElementById('testArea').classList.add('hidden'); 
+    document.getElementById('resultWrap').classList.add('show'); 
+    return; 
+  }
+  const q = set.questions[cur];
+  document.getElementById('qNum').textContent = 'Review — প্রশ্ন ' + (cur + 1) + ' / ' + set.questions.length;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressFill').style.width = ((cur + 1) / set.questions.length * 100) + '%';
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('nextBtn').textContent = cur === set.questions.length - 1 ? 'শেষ করো' : 'পরবর্তী →';
+  document.getElementById('nextBtn').onclick = () => { cur++; loadReview(); };
+
+  const opts = document.getElementById('qOpts');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt disabled';
+    if (i === q.ans) btn.classList.add('correct');
+    else if (userAnswers[cur] === i) btn.classList.add('wrong');
+    btn.innerHTML = '<div class="opt-circle">' + LABELS[i] + '</div><div class="opt-text">' + o + '</div>';
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('explanationText').innerHTML = '<strong>ব্যাখ্যা:</strong> ' + q.exp;
+  document.getElementById('explanation').classList.add('show');
+  document.getElementById('scoreShow').textContent = 'সবুজ = সঠিক উত্তর';
+}
+</script>
+
+</body>
+</html>
